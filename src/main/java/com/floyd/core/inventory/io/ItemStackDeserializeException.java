@@ -1,0 +1,29 @@
+package com.floyd.core.inventory.io;
+
+/**
+ * itemStack反序列化异常
+ *
+ * @author floyd
+ * @date 2026/3/24
+ */
+public class ItemStackDeserializeException extends RuntimeException {
+    public ItemStackDeserializeException(String message) {
+        super(message);
+    }
+
+    public ItemStackDeserializeException() {
+        super();
+    }
+
+    public ItemStackDeserializeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    protected ItemStackDeserializeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+    public ItemStackDeserializeException(Throwable cause) {
+        super(cause);
+    }
+}
