@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author floyd
@@ -58,12 +58,23 @@ public abstract class FloydPlugin extends JavaPlugin {
     protected abstract void initialize();
 
     protected void initSpringApplication() {
-        applicationContext = new AnnotationConfigApplicationContext(getConfigClasses());
+        ClassLoader oriClassLoader = Thread.currentThread().getContextClassLoader();
+        // use current plugin's classloader to make sure spring application can initialize correctly
+        Thread.currentThread().setContextClassLoader(getClassLoader());
+        try {
+            List<Class<?>> configs = new ArrayList<>();
+            configs.add(SpringConfig.class);
+            configs.addAll(getCustomConfigClasses());
+            Class<?>[] configClasses = new Class<?>[configs.size()];
+            configClasses = configs.toArray(configClasses);
+            applicationContext = new AnnotationConfigApplicationContext(configClasses);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oriClassLoader);
+        }
     }
 
-
-    protected Class<?>[] getConfigClasses() {
-        return new Class<?>[0];
+    protected List<Class<?>> getCustomConfigClasses() {
+        return new ArrayList<>();
     }
 
     protected abstract void cleanup();
