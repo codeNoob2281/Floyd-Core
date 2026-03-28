@@ -24,7 +24,7 @@ public class PermissionAspectTest extends AbstractSpringTest {
     Player player;
 
     @Test
-    public void testNeedPermission() {
+    public void testRequiredPermission() {
         when(player.hasPermission("floyd-plugin.demo")).thenReturn(false);
         doAnswer(invocation -> {
             net.kyori.adventure.text.Component message = (net.kyori.adventure.text.Component) invocation.getArguments()[0];

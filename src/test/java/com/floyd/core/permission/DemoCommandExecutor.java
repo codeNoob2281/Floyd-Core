@@ -4,9 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,7 +16,7 @@ public class DemoCommandExecutor implements CommandExecutor {
 
 
     @Override
-    @NeedPermission("floyd-plugin.demo")
+    @RequiredPermission("floyd-plugin.demo")
     public boolean onCommand(CommandSender player, Command command,
                              String label, String[] args) {
         System.out.println("执行命令demo");

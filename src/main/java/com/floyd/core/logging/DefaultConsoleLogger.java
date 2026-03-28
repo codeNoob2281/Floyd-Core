@@ -33,19 +33,11 @@ public class DefaultConsoleLogger implements ConsoleLogger {
             .appendLiteral("]")
             .toFormatter();
 
-    public DefaultConsoleLogger(Logger logger, File logFile, Properties logProperties) {
+    public DefaultConsoleLogger(Logger logger, File logFile, LogConfig logConfig) {
         this.logger = logger;
-        this.logConfig = initLogConfig(logProperties);
+        this.logConfig = logConfig;
         this.logFile = logFile;
         initFileWriter();
-    }
-
-    protected LogConfig initLogConfig(Properties logProperties) {
-        LogConfig config = new LogConfig();
-        config.setLogFileEnabled(
-                Boolean.parseBoolean((String) logProperties.getOrDefault("file.logFileEnabled", "false"))
-        );
-        return config;
     }
 
     private synchronized void initFileWriter() {
@@ -138,9 +130,4 @@ public class DefaultConsoleLogger implements ConsoleLogger {
         return logger.getLevel();
     }
 
-    @Data
-    private static class LogConfig {
-        private boolean logFileEnabled;
-        private String logFileName;
-    }
 }

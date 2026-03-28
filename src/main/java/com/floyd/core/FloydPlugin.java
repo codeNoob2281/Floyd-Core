@@ -2,6 +2,7 @@ package com.floyd.core;
 
 import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.DefaultConsoleLogger;
+import com.floyd.core.logging.LogConfig;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.ApplicationContext;
@@ -84,12 +85,15 @@ public abstract class FloydPlugin extends JavaPlugin {
     }
 
     protected void initConsoleLogger() {
-        Properties logProperties = new Properties();
-        logProperties.setProperty("file.logFileEnabled", getConfig().getString("logging.file.enable"));
-        consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logProperties);
+        LogConfig logConfig = new LogConfig();
+        logConfig.setLogFileEnabled(getConfig().getBoolean("logging.file.enable"));
+        consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logConfig);
     }
 
     public static ConsoleLogger logger() {
+        if (consoleLogger == null) {
+            throw new IllegalStateException("console logger is not initialized");
+        }
         return consoleLogger;
     }
 
