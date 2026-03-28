@@ -6,6 +6,7 @@ Floyd-Core 是一款轻量级的 Minecraft 插件开发框架，基于 Spring Fr
 
 - 🍃 **轻量级设计**：简洁的 API，易于上手和使用
 - 🌱 **Spring 集成**：内置 Spring Framework 支持，方便依赖注入和管理
+- 🔒 **权限注解**：基于 AOP 的权限检查，简化权限验证逻辑
 - 📦 **物品序列化**：提供 ItemStack 序列化和反序列化工具
 - 📝 **日志系统**：内置控制台日志和文件日志支持
 - 🔧 **可定制性**：支持自定义 Banner、配置和生命周期管理
@@ -90,7 +91,50 @@ logger().error("错误信息");
 logger().error("异常信息", exception);
 ```
 
-### 5. 物品序列化
+### 6. 权限注解（AOP）
+
+使用 `@NeedPermission` 注解自动进行权限检查：
+
+```java
+@NeedPermission("floyd-backpack.clear")
+public void clearBackpack(Player player) {
+    // 只有拥有 floyd-backpack.clear 权限的玩家才能执行此方法
+    // 如果权限不足，会自动发送提示消息给玩家
+}
+```
+
+**特性**：
+- ✅ 自动检测 Player 参数并验证权限
+- ✅ 权限不足时自动发送红色警告消息
+- ✅ 无需手动编写权限检查代码
+- ✅ 基于 AspectJ 实现，无侵入式设计
+
+**使用示例**：
+
+```java
+@Service
+public class BackpackService {
+    
+    @NeedPermission("floyd-backpack.open")
+    public void openBackpack(Player player, int backpackId) {
+        // 自动验证玩家是否有 floyd-backpack.open 权限
+        // 打开背包逻辑
+    }
+    
+    @NeedPermission("floyd-backpack.upgrade")
+    public void upgradeBackpack(Player player, int level) {
+        // 自动验证玩家是否有 floyd-backpack.upgrade 权限
+        // 升级背包逻辑
+    }
+}
+```
+
+**注意事项**：
+- 方法必须包含 `Player` 类型参数
+- 权限不足时方法不会执行，直接返回
+- 权限标识格式建议：`插件名 - 模块。操作`
+
+## 核心模块
 
 ```java
 // 使用 BukkitItemStackSerializer
@@ -133,6 +177,11 @@ ItemStack item = serializer.deserialize(json);
 ### 异常处理
 
 - `PluginBizException`：插件业务异常类
+
+### 权限注解（Permission）
+
+- `@NeedPermission`：权限检查注解
+- `PermissionAspect`：权限切面实现
 
 ## 配置示例
 

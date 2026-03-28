@@ -2,13 +2,14 @@ package com.floyd.core;
 
 import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.DefaultConsoleLogger;
+import com.floyd.core.logging.LogConfig;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author floyd
@@ -58,12 +59,23 @@ public abstract class FloydPlugin extends JavaPlugin {
     protected abstract void initialize();
 
     protected void initSpringApplication() {
-        applicationContext = new AnnotationConfigApplicationContext(getConfigClasses());
+        ClassLoader oriClassLoader = Thread.currentThread().getContextClassLoader();
+        // use current plugin's classloader to make sure spring application can initialize correctly
+        Thread.currentThread().setContextClassLoader(getClassLoader());
+        try {
+            List<Class<?>> configs = new ArrayList<>();
+            configs.add(SpringConfig.class);
+            configs.addAll(getCustomConfigClasses());
+            Class<?>[] configClasses = new Class<?>[configs.size()];
+            configClasses = configs.toArray(configClasses);
+            applicationContext = new AnnotationConfigApplicationContext(configClasses);
+        } finally {
+            Thread.currentThread().setContextClassLoader(oriClassLoader);
+        }
     }
 
-
-    protected Class<?>[] getConfigClasses() {
-        return new Class<?>[0];
+    protected List<Class<?>> getCustomConfigClasses() {
+        return new ArrayList<>();
     }
 
     protected abstract void cleanup();
@@ -73,12 +85,15 @@ public abstract class FloydPlugin extends JavaPlugin {
     }
 
     protected void initConsoleLogger() {
-        Properties logProperties = new Properties();
-        logProperties.setProperty("file.logFileEnabled", getConfig().getString("logging.file.enable"));
-        consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logProperties);
+        LogConfig logConfig = new LogConfig();
+        logConfig.setLogFileEnabled(getConfig().getBoolean("logging.file.enable"));
+        consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logConfig);
     }
 
     public static ConsoleLogger logger() {
+        if (consoleLogger == null) {
+            throw new IllegalStateException("console logger is not initialized");
+        }
         return consoleLogger;
     }
 

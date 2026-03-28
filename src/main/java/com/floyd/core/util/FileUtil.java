@@ -13,6 +13,13 @@ import java.nio.charset.Charset;
  */
 public class FileUtil {
 
+    /**
+     * 读取文件内容
+     *
+     * @param file
+     * @param charset
+     * @return
+     */
     public static String readString(File file, Charset charset) {
         try (FileInputStream fis = new FileInputStream(file)) {
             byte[] buffer = new byte[(int) file.length()];
@@ -26,6 +33,13 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 写入文件内容
+     *
+     * @param file
+     * @param content
+     * @param charset
+     */
     public static void writeString(File file, String content, Charset charset) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(content.getBytes(charset));
