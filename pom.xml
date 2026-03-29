@@ -4,7 +4,7 @@
 
     <groupId>com.floyd.mc</groupId>
     <artifactId>floyd-core</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -24,7 +24,30 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals><goal>jar-no-fork</goal></goals>
+                        </execution>
+                    </executions>
+                </plugin>
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                    <version>3.12.0</version>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <phase>package</phase>-->
+<!--                            <goals><goal>jar</goal></goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -85,5 +108,12 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/codeNoob2281/Floyd-Core</url>
+        </repository>
+    </distributionManagement>
 
 </project>

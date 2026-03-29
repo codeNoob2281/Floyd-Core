@@ -7,7 +7,7 @@ package com.floyd.core.util;
 public class StrUtil {
 
     /**
-     * 判断字符串是否为空
+     * Check if string is empty
      *
      * @param str
      * @return

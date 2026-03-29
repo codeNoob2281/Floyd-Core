@@ -3,7 +3,7 @@ package com.floyd.core.inventory.io;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * 物品序列化接口
+ * Item serialization interface
  *
  * @author floyd
  * @date 2026/3/24
@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public interface ItemStackSerializer {
 
     /**
-     * 序列化物品
+     * Serialize item
      *
      * @param itemStack
      * @return
@@ -19,7 +19,7 @@ public interface ItemStackSerializer {
     String serialize(ItemStack itemStack) ;
 
     /**
-     * 反序列化物品
+     * Deserialize item
      *
      * @param serializedData
      * @return

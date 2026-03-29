@@ -19,7 +19,7 @@ public class DemoCommandExecutor implements CommandExecutor {
     @RequiredPermission("floyd-plugin.demo")
     public boolean onCommand(CommandSender player, Command command,
                              String label, String[] args) {
-        System.out.println("执行命令demo");
+        System.out.println("Execute demo command");
         return true;
     }
 }

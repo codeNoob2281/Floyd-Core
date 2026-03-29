@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Base64;
 
 /**
- * bukkit官方支持的序列化实现
+ * Bukkit official supported serialization implementation
  *
  * @author floyd
  * @date 2026/3/24
@@ -19,7 +19,7 @@ public class BukkitItemStackSerializer implements ItemStackSerializer {
             byte[] bytes = itemStack.serializeAsBytes();
             return Base64.getEncoder().encodeToString(bytes);
         } catch (Exception e) {
-            throw new ItemStackSerializeException("序列化ItemStack异常", e);
+            throw new ItemStackSerializeException("Failed to serialize ItemStack", e);
         }
     }
 
@@ -28,7 +28,7 @@ public class BukkitItemStackSerializer implements ItemStackSerializer {
         try {
             return ItemStack.deserializeBytes(Base64.getDecoder().decode(serializedData));
         } catch (Exception e) {
-            throw new ItemStackDeserializeException("反序列化ItemStack异常", e);
+            throw new ItemStackDeserializeException("Failed to deserialize ItemStack", e);
         }
     }
 }

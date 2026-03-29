@@ -12,7 +12,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  */
 @Configuration
 @ComponentScan
-@EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true) // 开启AOP
+@EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true) // Enable AOP
 public class SpringConfig {
 
     @Bean

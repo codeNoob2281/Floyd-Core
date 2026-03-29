@@ -23,33 +23,38 @@ public abstract class FloydPlugin extends JavaPlugin {
 
     private static final String LOG_FILE_NAME = "mc-plugin.log";
 
-    @Getter
-    private static ApplicationContext applicationContext;
+    private static AnnotationConfigApplicationContext applicationContext;
 
     @Override
     public void onEnable() {
         printBanner();
         floydPlugin = this;
-        // 初始化默认配置
+        // Initialize default config
         initConfig();
-        // 初始化logger
+        // Initialize logger
         initConsoleLogger();
-        // 初始化spring容器
+        // Initialize spring container
         initSpringApplication();
-        // 自定义的插件初始化逻辑
+        // Custom plugin initialization logic
         initialize();
-        getLogger().info("感谢使用插件：" + getPluginName());
-        getLogger().info("作者：" + PluginConstants.AUTHOR);
+        getLogger().info("Thank you for using plugin: " + getPluginName());
+        getLogger().info("Author: " + PluginConstants.AUTHOR);
     }
 
     @Override
     public void onDisable() {
-        // 自定义的插件禁用逻辑
+        // Custom plugin disable logic
         cleanup();
-        // 关闭日志文件写入
+        // Close spring application
+        if (applicationContext != null) {
+            getLogger().info("Closing spring application...");
+            applicationContext.close();
+        }
+        // Close log file writer
+        getLogger().info("Closing log file...");
         consoleLogger.closeFileWriter();
-        getLogger().info(getPluginName() + "插件已禁用，感谢使用");
-        getLogger().info("作者：" + PluginConstants.AUTHOR);
+        getLogger().info(getPluginName() + " plugin has been disabled, thank you for using");
+        getLogger().info("Author: " + PluginConstants.AUTHOR);
     }
 
     public static FloydPlugin instance() {
@@ -60,7 +65,7 @@ public abstract class FloydPlugin extends JavaPlugin {
 
     protected void initSpringApplication() {
         ClassLoader oriClassLoader = Thread.currentThread().getContextClassLoader();
-        // use current plugin's classloader to make sure spring application can initialize correctly
+        // Use current plugin's classloader to make sure spring application can initialize correctly
         Thread.currentThread().setContextClassLoader(getClassLoader());
         try {
             List<Class<?>> configs = new ArrayList<>();
@@ -84,9 +89,13 @@ public abstract class FloydPlugin extends JavaPlugin {
         saveDefaultConfig();
     }
 
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
     protected void initConsoleLogger() {
         LogConfig logConfig = new LogConfig();
-        logConfig.setLogFileEnabled(getConfig().getBoolean("logging.file.enable"));
+        logConfig.setLogFileEnabled(getConfig().getBoolean("logging.file.enable", false));
         consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logConfig);
     }
 

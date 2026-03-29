@@ -12,21 +12,21 @@ import java.lang.annotation.*;
 public @interface RequiredPermission {
 
     /**
-     * 权限标识，例如：floyd-backpack.clear
+     * Permission value, for example: floyd-backpack.clear
      *
      * @return
      */
     String value();
-
+    
     /**
-     * 权限提示信息
+     * Permission message
      *
      * @return
      */
     String message() default "you don't have permission to execute this command.";
-
+    
     /**
-     * 是否提示权限标识，默认为false
+     * Whether to show permission value, default is false
      *
      * @return
      */

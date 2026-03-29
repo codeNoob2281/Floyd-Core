@@ -2,10 +2,12 @@ package com.floyd.core.util;
 
 import com.floyd.core.PluginBizException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author floyd
@@ -13,28 +15,30 @@ import java.nio.charset.Charset;
  */
 public class FileUtil {
 
+    public static final int BUFFER_SIZE = 8192;
+
     /**
-     * 读取文件内容
+     * Read file content
      *
      * @param file
      * @param charset
      * @return
      */
     public static String readString(File file, Charset charset) {
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] buffer = new byte[(int) file.length()];
-            int readLength = fis.read(buffer);
-            if (readLength != buffer.length) {
-                throw new RuntimeException("文件长度异常");
+        try (FileInputStream fis = new FileInputStream(file); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int len;
+            while ((len = fis.read(buffer)) != -1) {
+                bos.write(buffer, 0, len);
             }
-            return new String(buffer, charset);
+            return bos.toString(charset);
         } catch (Exception e) {
             throw new PluginBizException(e);
         }
     }
 
     /**
-     * 写入文件内容
+     * Write content to file
      *
      * @param file
      * @param content
