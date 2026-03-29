@@ -1,5 +1,6 @@
 package com.floyd.core.logging;
 
+import com.floyd.core.util.FileUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,7 +26,7 @@ public class DefaultConsoleLogger implements ConsoleLogger {
 
     private final File logFile;
 
-    private OutputStreamWriter fileWriter;
+    private BufferedWriter fileWriter;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = new DateTimeFormatterBuilder()
             .appendLiteral("[")
@@ -47,13 +48,10 @@ public class DefaultConsoleLogger implements ConsoleLogger {
         try {
             if (!this.logFile.exists()) {
                 if (!this.logFile.createNewFile()) {
-                    throw new RuntimeException("Failed to create log file：" + this.logFile.getAbsolutePath());
+                    throw new RuntimeException("Failed to create log file: " + this.logFile.getAbsolutePath());
                 }
             }
-            fileWriter = new OutputStreamWriter(
-                    new FileOutputStream(this.logFile, true),
-                    StandardCharsets.UTF_8
-            );
+            fileWriter = new BufferedWriter(new FileWriter(logFile, StandardCharsets.UTF_8, true), FileUtil.BUFFER_SIZE);
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Failed to create log file writer", e);
         }

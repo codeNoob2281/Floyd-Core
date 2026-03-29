@@ -1,7 +1,7 @@
 package com.floyd.core.inventory.io;
 
 /**
- * itemStack序列化异常
+ * ItemStack serialization exception
  *
  * @author floyd
  * @date 2026/3/24

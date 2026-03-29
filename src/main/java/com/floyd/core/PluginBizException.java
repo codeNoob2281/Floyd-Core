@@ -1,7 +1,7 @@
 package com.floyd.core;
 
 /**
- * 插件业务级异常
+ * Plugin business exception
  *
  * @author floyd
  * @date 2026/3/24

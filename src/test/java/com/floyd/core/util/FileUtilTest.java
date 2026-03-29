@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * FileUtil 单元测试
+ * FileUtil unit tests
  *
  * @author floyd
  */
@@ -34,7 +34,7 @@ class FileUtilTest {
 
     @Test
     void testReadString_WithGBKCharset() throws IOException {
-        String content = "测试 GBK 编码";
+        String content = "Test GBK encoding";
         File file = createTempFile("test_gbk.txt", content);
 
         String result = FileUtil.readString(file, Charset.forName("GBK"));
@@ -63,7 +63,7 @@ class FileUtilTest {
 
     @Test
     void testReadString_WithSpecialCharacters() throws IOException {
-        String content = "特殊字符：\n\t\r\\\"'<>{}[]&$#@!~`|^*()+=-";
+        String content = "Special characters: \n\t\r\\\"'<>{}[]&$#@!~`|^*()+=-";
         File file = createTempFile("test_special.txt", content);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
@@ -73,7 +73,7 @@ class FileUtilTest {
 
     @Test
     void testReadString_WithMultilineContent() throws IOException {
-        String content = "第一行\n第二行\n第三行\n第四行";
+        String content = "Line 1\nLine 2\nLine 3\nLine 4";
         File file = createTempFile("test_multiline.txt", content);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
@@ -97,7 +97,7 @@ class FileUtilTest {
 
     @Test
     void testWriteString_WithUTF8Charset() throws IOException {
-        String content = "写入测试内容 Hello World!";
+        String content = "Write test content Hello World!";
         File file = new File(tempDir, "test_write_utf8.txt");
 
         FileUtil.writeString(file, content, StandardCharsets.UTF_8);
@@ -109,8 +109,8 @@ class FileUtilTest {
 
     @Test
     void testWriteString_WithOverwriteExistingFile() throws IOException {
-        File file = createTempFile("test_overwrite.txt", "原始内容");
-        String newContent = "新内容";
+        File file = createTempFile("test_overwrite.txt", "Original content");
+        String newContent = "New content";
 
         FileUtil.writeString(file, newContent, StandardCharsets.UTF_8);
 
@@ -134,7 +134,7 @@ class FileUtilTest {
         File file = new File(tempDir, "test_write_null_charset.txt");
 
         assertThrows(PluginBizException.class, () -> {
-            FileUtil.writeString(file, "内容", null);
+            FileUtil.writeString(file, "content", null);
         });
     }
 

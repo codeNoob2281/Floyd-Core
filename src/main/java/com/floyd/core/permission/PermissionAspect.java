@@ -45,7 +45,11 @@ public class PermissionAspect {
                 }
                 errMsg += permAnnotation.message();
                 issueCmdPlayer.sendMessage(Component.text(errMsg, NamedTextColor.RED));
-                return true;
+                Class<?> returnType = methodSignature.getMethod().getReturnType();
+                if (returnType == boolean.class || returnType == Boolean.class) {
+                    return false;
+                }
+                return null;
             }
         }
         return jp.proceed();
