@@ -3,10 +3,14 @@ package com.floyd.core.command;
 import com.floyd.core.collection.Trie;
 import com.floyd.core.util.StrUtil;
 import lombok.Getter;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -16,9 +20,14 @@ import java.util.stream.Collectors;
  * @date 2026/3/30
  */
 @Getter
-public class TrieCommandCompleter implements CommandCompleter {
+public class TrieCommandCompleter implements PermCheckCommandCompleter {
 
     private final Trie trie;
+
+    /**
+     * Command permission map
+     */
+    private final Map<String, String> commandPermissionMap = new ConcurrentHashMap<>(32);
 
     public TrieCommandCompleter() {
         this.trie = new Trie();
@@ -42,6 +51,15 @@ public class TrieCommandCompleter implements CommandCompleter {
             return;
         }
         trie.insert(command);
+    }
+
+    @Override
+    public void addCommand(String command, String permission) {
+        if (command == null || command.isEmpty()) {
+            return;
+        }
+        addCommand(command);
+        commandPermissionMap.put(command, permission);
     }
 
     @Override
@@ -75,7 +93,26 @@ public class TrieCommandCompleter implements CommandCompleter {
     }
 
     @Override
+    public List<String> complete(@Nullable Player player, String input) {
+        List<String> fullCmdList = complete(input);
+        if (player == null) {
+            return fullCmdList;
+        }
+        return fullCmdList.stream()
+                .filter(cmd -> {
+                    String permission = commandPermissionMap.get(cmd);
+                    return permission == null || player.hasPermission(permission);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<String> nextArgs(String command, String... args) {
+        return nextArgs(null, command, args);
+    }
+
+    @Override
+    public List<String> nextArgs(@Nullable Player player, String command, String... args) {
         String cmdWithArgs = StrUtil.emptyIfNull(command);
         if (args.length > 0) {
             String argStr = Arrays.stream(args)
@@ -86,7 +123,7 @@ public class TrieCommandCompleter implements CommandCompleter {
 
         // Get the possible completions
         final String cmdToComplete = cmdWithArgs;
-        List<String> completeCmdList = complete(cmdToComplete);
+        List<String> completeCmdList = complete(player, cmdToComplete);
 
         // Get the next argument
         return completeCmdList.stream()
