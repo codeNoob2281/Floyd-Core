@@ -1,11 +1,13 @@
 package com.floyd.core.command;
 
 import com.floyd.core.collection.Trie;
+import com.floyd.core.util.StrUtil;
 import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Trie-based command completer implementation
@@ -57,36 +59,50 @@ public class TrieCommandCompleter implements CommandCompleter {
 
     @Override
     public List<String> complete(String input) {
-        if (input == null || input.isEmpty()) {
-            input = "";
+        if (StrUtil.isEmpty(input)) {
+            return trie.getByPrefix(StrUtil.EMPTY);
         }
+
         // Normalize input: convert to lowercase for case-insensitive completion
         String normalizedInput = input.toLowerCase();
         List<String> completions = trie.getByPrefix(normalizedInput);
 
         // If no matches found with lowercase, try to match the original case
-        if (!normalizedInput.isEmpty() && completions.isEmpty()) {
+        if (completions.isEmpty()) {
             completions = trie.getByPrefix(input);
         }
+        return completions;
+    }
+
+    @Override
+    public List<String> nextArgs(String command, String... args) {
+        String cmdWithArgs = StrUtil.emptyIfNull(command);
+        if (args.length > 0) {
+            String argStr = Arrays.stream(args)
+                    .map(StrUtil::emptyIfNull)
+                    .collect(Collectors.joining(StrUtil.SPACE));
+            cmdWithArgs = cmdWithArgs + StrUtil.SPACE + argStr;
+        }
+
+        // Get the possible completions
+        final String cmdToComplete = cmdWithArgs;
+        List<String> completeCmdList = complete(cmdToComplete);
 
         // Get the next argument
-        List<String> formatArgs = Arrays.stream(input.split(" "))
-                .filter(arg -> !arg.isEmpty())
-                .toList();
-        return completions.stream().map(cmd -> {
-                    String[] subCmdList = cmd.split(" ");
-                    if (formatArgs.isEmpty()) {
-                        return subCmdList[0];
-                    }
-                    String lastArg = formatArgs.getLast();
-                    String subCmd = subCmdList[formatArgs.size() - 1];
-                    if (subCmd.equalsIgnoreCase(lastArg)) {
-                        return subCmdList.length > formatArgs.size() ? subCmdList[formatArgs.size()] : null;
+        return completeCmdList.stream()
+                .map(completion -> {
+                    if (completion.length() <= cmdToComplete.length() || completion.charAt(cmdToComplete.length()) == ' ') {
+                        return null;
                     } else {
-                        return subCmd;
+                        int preSpacePos = completion.lastIndexOf(' ', cmdToComplete.length() - 1);
+                        int nextSpacePos = completion.indexOf(' ', cmdToComplete.length());
+                        nextSpacePos = nextSpacePos == -1 ? completion.length() : nextSpacePos;
+                        return completion.substring(preSpacePos + 1, nextSpacePos);
                     }
                 })
-                .filter(Objects::nonNull).toList();
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     @Override

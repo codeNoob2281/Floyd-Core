@@ -39,7 +39,7 @@ public class PermissionAspect {
                 throw new PluginBizException("empty permission value is not allowed");
             }
             if (!issueCmdPlayer.hasPermission(permValue)) {
-                String errMsg = "";
+                String errMsg = StrUtil.EMPTY;
                 if (permAnnotation.tipPermValue()) {
                     errMsg += "the permission [" + permValue + "] is required, ";
                 }
