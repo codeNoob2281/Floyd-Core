@@ -2,10 +2,7 @@ package com.floyd.core.util;
 
 import com.floyd.core.PluginBizException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -22,9 +19,10 @@ public class FileUtil {
      *
      * @param file
      * @param charset
-     * @return
+     * @return file content
+     * @throws IOException if an I/O error occurs
      */
-    public static String readString(File file, Charset charset) {
+    public static String readString(File file, Charset charset) throws IOException {
         try (FileInputStream fis = new FileInputStream(file); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             byte[] buffer = new byte[BUFFER_SIZE];
             int len;
@@ -32,23 +30,20 @@ public class FileUtil {
                 bos.write(buffer, 0, len);
             }
             return bos.toString(charset);
-        } catch (Exception e) {
-            throw new PluginBizException(e);
         }
     }
 
     /**
      * Write content to file
      *
-     * @param file
-     * @param content
-     * @param charset
+     * @param file    target file
+     * @param content to write
+     * @param charset charset
+     * @throws IOException if an I/O error occurs
      */
-    public static void writeString(File file, String content, Charset charset) {
+    public static void writeString(File file, String content, Charset charset) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(content.getBytes(charset));
-        } catch (Exception e) {
-            throw new PluginBizException(e);
         }
     }
 }
