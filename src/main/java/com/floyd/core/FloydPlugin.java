@@ -3,6 +3,7 @@ package com.floyd.core;
 import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.DefaultConsoleLogger;
 import com.floyd.core.logging.LogConfig;
+import com.floyd.core.util.StrUtil;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.ApplicationContext;
@@ -119,6 +120,6 @@ public abstract class FloydPlugin extends JavaPlugin {
     }
 
     protected String getBanner() {
-        return "";
+        return StrUtil.EMPTY;
     }
 }
