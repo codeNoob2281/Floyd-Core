@@ -15,7 +15,6 @@ import java.lang.reflect.Field;
 
 /**
  * @author floyd
- * @date 2026/3/28
  */
 @ExtendWith(MockitoExtension.class)
 public class PermissionAspectTest extends AbstractSpringTest {

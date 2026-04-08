@@ -10,7 +10,6 @@ import java.util.List;
  * Trie tree implementation for command completion
  *
  * @author floyd
- * @date 2026/3/30
  */
 @Getter
 public class Trie {

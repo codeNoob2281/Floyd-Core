@@ -4,7 +4,6 @@ package com.floyd.core;
  * Plugin business exception
  *
  * @author floyd
- * @date 2026/3/24
  */
 public class PluginBizException extends RuntimeException {
 

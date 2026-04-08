@@ -12,7 +12,6 @@ import java.util.Map;
  * Trie tree node for command completion
  *
  * @author floyd
- * @date 2026/3/30
  */
 @Getter
 public class TrieNode {

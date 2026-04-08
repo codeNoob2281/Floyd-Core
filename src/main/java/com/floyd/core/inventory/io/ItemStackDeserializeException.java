@@ -4,7 +4,6 @@ package com.floyd.core.inventory.io;
  * ItemStack deserialization exception
  *
  * @author floyd
- * @date 2026/3/24
  */
 public class ItemStackDeserializeException extends RuntimeException {
     public ItemStackDeserializeException(String message) {

@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * Trie-based command completer implementation
  *
  * @author floyd
- * @date 2026/3/30
  */
 @Getter
 public class TrieCommandCompleter implements PermCheckCommandCompleter {

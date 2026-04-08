@@ -9,7 +9,6 @@ import java.util.Base64;
  * Bukkit official supported serialization implementation
  *
  * @author floyd
- * @date 2026/3/24
  */
 public class BukkitItemStackSerializer implements ItemStackSerializer {
 

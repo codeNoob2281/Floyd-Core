@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack;
  * Item serialization interface
  *
  * @author floyd
- * @date 2026/3/24
  */
 public interface ItemStackSerializer {
 

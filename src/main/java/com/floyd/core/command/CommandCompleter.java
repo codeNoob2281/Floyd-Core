@@ -6,7 +6,6 @@ import java.util.List;
  * Command completer interface for tab completion
  *
  * @author floyd
- * @date 2026/3/30
  */
 public interface CommandCompleter {
 

@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 /**
  * @author floyd
- * @date 2026/3/28
  */
 @Aspect
 public class PermissionAspect {

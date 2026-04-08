@@ -8,7 +8,6 @@ import java.util.List;
  * Permission checkable command completer interface for tab completion
  *
  * @author floyd
- * @date 2026/3/31
  */
 public interface PermCheckCommandCompleter extends CommandCompleter {
 
