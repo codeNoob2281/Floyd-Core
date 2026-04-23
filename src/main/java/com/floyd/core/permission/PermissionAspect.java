@@ -11,6 +11,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 /**
  * @author floyd
  */
@@ -23,33 +25,31 @@ public class PermissionAspect {
 
     @Around("requiredPermission()")
     public Object aroundNeedPermission(ProceedingJoinPoint jp) throws Throwable {
-        Player issueCmdPlayer = null;
-        for (Object arg : jp.getArgs()) {
-            if (arg instanceof Player) {
-                issueCmdPlayer = (Player) arg;
-                break;
-            }
+        MethodSignature methodSignature = (MethodSignature) jp.getSignature();
+        RequiredPermission permAnnotation = methodSignature.getMethod().getAnnotation(RequiredPermission.class);
+        String permValue = permAnnotation.value();
+        if (StrUtil.isEmpty(permValue)) {
+            throw new PluginBizException("empty permission value is not allowed");
         }
-        if (issueCmdPlayer != null) {
-            MethodSignature methodSignature = (MethodSignature) jp.getSignature();
-            RequiredPermission permAnnotation = methodSignature.getMethod().getAnnotation(RequiredPermission.class);
-            String permValue = permAnnotation.value();
-            if (StrUtil.isEmpty(permValue)) {
-                throw new PluginBizException("empty permission value is not allowed");
+
+        Player issueCmdPlayer = Arrays.stream(jp.getArgs())
+                .filter(Player.class::isInstance)
+                .findFirst()
+                .map(Player.class::cast)
+                .orElseThrow(() -> new PluginBizException("No Player parameter found in method annotated with @RequiredPermission"));
+
+        if (!issueCmdPlayer.hasPermission(permValue)) {
+            String errMsg = StrUtil.EMPTY;
+            if (permAnnotation.tipPermValue()) {
+                errMsg += "the permission [" + permValue + "] is required, ";
             }
-            if (!issueCmdPlayer.hasPermission(permValue)) {
-                String errMsg = StrUtil.EMPTY;
-                if (permAnnotation.tipPermValue()) {
-                    errMsg += "the permission [" + permValue + "] is required, ";
-                }
-                errMsg += permAnnotation.message();
-                issueCmdPlayer.sendMessage(Component.text(errMsg, NamedTextColor.RED));
-                Class<?> returnType = methodSignature.getMethod().getReturnType();
-                if (returnType == boolean.class || returnType == Boolean.class) {
-                    return false;
-                }
-                return null;
+            errMsg += permAnnotation.message();
+            issueCmdPlayer.sendMessage(Component.text(errMsg, NamedTextColor.RED));
+            Class<?> returnType = methodSignature.getMethod().getReturnType();
+            if (returnType == boolean.class || returnType == Boolean.class) {
+                return false;
             }
+            return null;
         }
         return jp.proceed();
     }

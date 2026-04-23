@@ -4,9 +4,7 @@ import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.settings.properties.LoggingSettings;
 import com.floyd.core.util.FileUtil;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.bukkit.configuration.Configuration;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -82,6 +80,11 @@ public class ConsoleLogger {
     private synchronized static void initFileWriter() {
         checkFirstInitialized();
         try {
+            // 确保父目录存在
+            File parent = logFile.getParentFile();
+            if (parent != null && !parent.exists() && !parent.mkdirs()) {
+                throw new RuntimeException("Failed to create log directory: " + parent.getAbsolutePath());
+            }
             if (!logFile.exists()) {
                 if (!logFile.createNewFile()) {
                     throw new RuntimeException("Failed to create log file: " + logFile.getAbsolutePath());
@@ -141,10 +144,10 @@ public class ConsoleLogger {
         }
     }
 
-    public void warning(String message) {
+    public void warn(String message) {
         if (getLevel().include(LogLevel.WARNING)) {
             logger.warning(message);
-            writeLog("[WARNING] " + message);
+            writeLog("[WARN] " + message);
         }
     }
 
@@ -153,6 +156,14 @@ public class ConsoleLogger {
             String errorMessage = "[ERROR] " + message;
             logger.severe(errorMessage);
             writeLog(errorMessage);
+        }
+    }
+
+    public void error(Throwable throwable) {
+        if (getLevel().include(LogLevel.ERROR)) {
+            String errorMessage = "[ERROR] " + throwable.getMessage();
+            logger.log(Level.SEVERE, errorMessage, throwable);
+            writeLog(errorMessage + System.lineSeparator() + getStackTraceString(throwable));
         }
     }
 
