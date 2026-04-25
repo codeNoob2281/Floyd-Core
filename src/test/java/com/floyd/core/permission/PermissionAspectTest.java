@@ -5,13 +5,11 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-
-import static org.mockito.Mockito.*;
-
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.awt.*;
 import java.lang.reflect.Field;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author floyd

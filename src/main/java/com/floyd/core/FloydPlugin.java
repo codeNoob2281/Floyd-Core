@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,15 @@ public abstract class FloydPlugin extends JavaPlugin {
             throw new IllegalStateException("fail to get the plugin instance, please make sure the plugin is initialized");
         }
         return floydPlugin;
+    }
+
+    /**
+     * Get the plugin data path.
+     *
+     * @return The plugin data path
+     */
+    public static Path getPluginDataPath() {
+        return instance().getDataFolder().toPath();
     }
 
     protected abstract void initialize();

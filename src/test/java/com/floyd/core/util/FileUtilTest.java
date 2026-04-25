@@ -1,10 +1,10 @@
 package com.floyd.core.util;
 
-import com.floyd.core.PluginBizException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,7 +25,7 @@ class FileUtilTest {
     @Test
     void testReadString_WithUTF8Charset() throws IOException {
         String content = "Hello, World! 你好，世界！";
-        File file = createTempFile("test_utf8.txt", content);
+        File file = createTempFile("test_utf8.txt", content, StandardCharsets.UTF_8);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
 
@@ -35,7 +35,7 @@ class FileUtilTest {
     @Test
     void testReadString_WithGBKCharset() throws IOException {
         String content = "Test GBK encoding";
-        File file = createTempFile("test_gbk.txt", content);
+        File file = createTempFile("test_gbk.txt", content, Charset.forName("GBK"));
 
         String result = FileUtil.readString(file, Charset.forName("GBK"));
 
@@ -56,7 +56,7 @@ class FileUtilTest {
     void testReadString_WithNonExistentFile() {
         File nonExistentFile = new File(tempDir, "not_exists.txt");
 
-        assertThrows(PluginBizException.class, () -> {
+        assertThrows(FileNotFoundException.class, () -> {
             FileUtil.readString(nonExistentFile, StandardCharsets.UTF_8);
         });
     }
@@ -64,7 +64,7 @@ class FileUtilTest {
     @Test
     void testReadString_WithSpecialCharacters() throws IOException {
         String content = "Special characters: \n\t\r\\\"'<>{}[]&$#@!~`|^*()+=-";
-        File file = createTempFile("test_special.txt", content);
+        File file = createTempFile("test_special.txt", content, StandardCharsets.UTF_8);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
 
@@ -74,7 +74,7 @@ class FileUtilTest {
     @Test
     void testReadString_WithMultilineContent() throws IOException {
         String content = "Line 1\nLine 2\nLine 3\nLine 4";
-        File file = createTempFile("test_multiline.txt", content);
+        File file = createTempFile("test_multiline.txt", content, StandardCharsets.UTF_8);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
 
@@ -88,7 +88,7 @@ class FileUtilTest {
             sb.append("Line ").append(i).append("\n");
         }
         String content = sb.toString();
-        File file = createTempFile("test_large.txt", content);
+        File file = createTempFile("test_large.txt", content, StandardCharsets.UTF_8);
 
         String result = FileUtil.readString(file, StandardCharsets.UTF_8);
 
@@ -109,7 +109,7 @@ class FileUtilTest {
 
     @Test
     void testWriteString_WithOverwriteExistingFile() throws IOException {
-        File file = createTempFile("test_overwrite.txt", "Original content");
+        File file = createTempFile("test_overwrite.txt", "Original content", StandardCharsets.UTF_8);
         String newContent = "New content";
 
         FileUtil.writeString(file, newContent, StandardCharsets.UTF_8);
@@ -133,14 +133,14 @@ class FileUtilTest {
     void testWriteString_WithNullCharset() throws IOException {
         File file = new File(tempDir, "test_write_null_charset.txt");
 
-        assertThrows(PluginBizException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             FileUtil.writeString(file, "content", null);
         });
     }
 
-    private File createTempFile(String fileName, String content) throws IOException {
+    private File createTempFile(String fileName, String content, Charset charset) throws IOException {
         File file = new File(tempDir, fileName);
-        try (FileWriter writer = new FileWriter(file)) {
+        try (FileWriter writer = new FileWriter(file, charset)) {
             writer.write(content);
         }
         return file;

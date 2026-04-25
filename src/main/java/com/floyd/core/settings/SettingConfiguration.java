@@ -31,8 +31,7 @@ public class SettingConfiguration {
 
     @Bean
     PropertyResource propertyResource() {
-        FloydPlugin instance = FloydPlugin.instance();
-        Path configPath = Paths.get(instance.getDataFolder().getPath(), "config.yml");
+        Path configPath = Paths.get(FloydPlugin.getPluginDataPath().toString(), "config.yml");
         return new YamlFileResource(configPath);
     }
 
