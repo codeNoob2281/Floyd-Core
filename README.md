@@ -394,7 +394,7 @@ Test reports will be generated in `target/site/jacoco/index.html`.
 
 ## 📄 License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL 3.0 - see the [LICENSE](LICENSE) file for details.
 
 ```
 Copyright 2026 floyd
@@ -456,14 +456,6 @@ Contributions are welcome! Please follow these steps:
 - [ ] Event system enhancements
 
 ---
-
-<div align="center">
-
-**If you find this project helpful, please consider giving it a ⭐ star!**
-
-Made with ❤️ by floyd
-
-</div>
 
 <div align="center">
 

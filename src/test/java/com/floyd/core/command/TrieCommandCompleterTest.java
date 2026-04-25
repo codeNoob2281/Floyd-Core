@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * Unit tests for Trie and TrieCommandCompleter
  *
  * @author floyd
- * @date 2026/3/30
  */
 class TrieCommandCompleterTest {
 

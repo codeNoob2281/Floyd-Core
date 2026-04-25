@@ -1,26 +1,25 @@
 package com.floyd.core;
 
 import com.floyd.core.logging.ConsoleLogger;
-import com.floyd.core.logging.DefaultConsoleLogger;
-import com.floyd.core.logging.LogConfig;
+import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.util.StrUtil;
-import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author floyd
- * @date 2026/3/22
  */
 public abstract class FloydPlugin extends JavaPlugin {
 
-    private static FloydPlugin floydPlugin;
+    private static volatile FloydPlugin floydPlugin;
 
-    private static DefaultConsoleLogger consoleLogger;
+    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(FloydPlugin.class);
 
     private static final String LOG_FILE_NAME = "mc-plugin.log";
 
@@ -28,18 +27,33 @@ public abstract class FloydPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        printBanner();
-        floydPlugin = this;
+        setPluginInstance(this);
         // Initialize default config
         initConfig();
-        // Initialize logger
-        initConsoleLogger();
         // Initialize spring container
         initSpringApplication();
+        // Initialize logger
+        initConsoleLogger();
         // Custom plugin initialization logic
         initialize();
-        getLogger().info("Thank you for using plugin: " + getPluginName());
-        getLogger().info("Author: " + PluginConstants.AUTHOR);
+        printBanner();
+        logger.info("Thank you for using plugin: " + getPluginName());
+        logger.info("Author: " + PluginConstants.AUTHOR);
+    }
+
+    /**
+     * Set the plugin instance. Use double check lock to avoid multiple initialization.
+     *
+     * @param instance The plugin instance
+     */
+    private static void setPluginInstance(FloydPlugin instance) {
+        if (floydPlugin == null) {
+            synchronized (FloydPlugin.class) {
+                if (floydPlugin == null) {
+                    floydPlugin = instance;
+                }
+            }
+        }
     }
 
     @Override
@@ -48,17 +62,25 @@ public abstract class FloydPlugin extends JavaPlugin {
         cleanup();
         // Close spring application
         if (applicationContext != null) {
-            getLogger().info("Closing spring application...");
+            logger.info("Closing spring application...");
             applicationContext.close();
         }
         // Close log file writer
-        getLogger().info("Closing log file...");
-        consoleLogger.closeFileWriter();
-        getLogger().info(getPluginName() + " plugin has been disabled, thank you for using");
-        getLogger().info("Author: " + PluginConstants.AUTHOR);
+        logger.info("Closing log file...");
+        ConsoleLogger.closeFileWriter();
+        logger.info(getPluginName() + " plugin has been disabled, thank you for using");
+        logger.info("Author: " + PluginConstants.AUTHOR);
     }
 
+    /**
+     * Get the initialized plugin instance.
+     *
+     * @return The instance of the plugin
+     */
     public static FloydPlugin instance() {
+        if (floydPlugin == null) {
+            throw new IllegalStateException("fail to get the plugin instance, please make sure the plugin is initialized");
+        }
         return floydPlugin;
     }
 
@@ -91,20 +113,16 @@ public abstract class FloydPlugin extends JavaPlugin {
     }
 
     public ApplicationContext getApplicationContext() {
+        if (applicationContext == null) {
+            throw new IllegalStateException("fail to get spring application context, please make sure the plugin is initialized");
+        }
         return applicationContext;
     }
 
     protected void initConsoleLogger() {
-        LogConfig logConfig = new LogConfig();
-        logConfig.setLogFileEnabled(getConfig().getBoolean("logging.file.enable", false));
-        consoleLogger = new DefaultConsoleLogger(getLogger(), new File(getDataFolder(), LOG_FILE_NAME), logConfig);
-    }
-
-    public static ConsoleLogger logger() {
-        if (consoleLogger == null) {
-            throw new IllegalStateException("console logger is not initialized");
-        }
-        return consoleLogger;
+        ConsoleLogger.initializeFirst(getLogger(), new File(getDataFolder(), LOG_FILE_NAME));
+        PluginSettingsManager pluginSettingsManager = getApplicationContext().getBean(PluginSettingsManager.class);
+        ConsoleLoggerFactory.reloadFromConfig(pluginSettingsManager);
     }
 
     public abstract String getPluginName();
@@ -114,7 +132,7 @@ public abstract class FloydPlugin extends JavaPlugin {
         if (banner != null && !banner.isBlank()) {
             String[] splitLines = banner.split("\n");
             for (String splitLine : splitLines) {
-                getLogger().info(splitLine);
+                logger.info(splitLine);
             }
         }
     }

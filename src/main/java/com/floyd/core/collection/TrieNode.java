@@ -1,7 +1,6 @@
 package com.floyd.core.collection;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import java.util.Map;
  * Trie tree node for command completion
  *
  * @author floyd
- * @date 2026/3/30
  */
 @Getter
 public class TrieNode {
@@ -23,10 +21,16 @@ public class TrieNode {
 
     private String value;
 
+    private List<String> allValuesCache;
+
+    private boolean cacheDirty;
+
+
     public TrieNode() {
         this.children = new HashMap<>();
         this.isEndOfWord = false;
         this.value = null;
+        this.cacheDirty = true;
     }
 
     /**
@@ -36,6 +40,7 @@ public class TrieNode {
      * @return the child node
      */
     public TrieNode addChild(Character character) {
+        this.cacheDirty = true;
         return children.computeIfAbsent(character, k -> new TrieNode());
     }
 
@@ -65,6 +70,7 @@ public class TrieNode {
      * @param command the full command
      */
     public void setEndOfWord(String command) {
+        this.cacheDirty = true;
         this.isEndOfWord = command != null && !command.isEmpty();
         this.value = command;
     }
@@ -75,6 +81,7 @@ public class TrieNode {
      * @param isEndOfWord the flag
      */
     public void setEndOfWord(boolean isEndOfWord) {
+        this.cacheDirty = true;
         this.isEndOfWord = isEndOfWord;
         if (!isEndOfWord) {
             this.value = null;
@@ -87,20 +94,22 @@ public class TrieNode {
      * @return list of commands
      */
     public List<String> getAllValues() {
-        List<String> commands = new ArrayList<>();
-        collectVals(this, new StringBuilder(), commands);
-        return commands;
+        if (cacheDirty) {
+            List<String> commands = new ArrayList<>();
+            collectVals(this, commands);
+            allValuesCache = commands;
+            cacheDirty = false;
+        }
+        return new ArrayList<>(allValuesCache);
     }
 
-    private void collectVals(TrieNode node, StringBuilder current, List<String> commands) {
+    private void collectVals(TrieNode node, List<String> commands) {
         if (node.isEndOfWord && node.value != null) {
             commands.add(node.value);
         }
 
         for (Map.Entry<Character, TrieNode> entry : node.children.entrySet()) {
-            current.append(entry.getKey());
-            collectVals(entry.getValue(), current, commands);
-            current.deleteCharAt(current.length() - 1);
+            collectVals(entry.getValue(), commands);
         }
     }
 

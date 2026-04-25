@@ -6,7 +6,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 /**
  * @author floyd
- * @date 2026/3/28
  */
 public abstract class AbstractSpringTest {
 
