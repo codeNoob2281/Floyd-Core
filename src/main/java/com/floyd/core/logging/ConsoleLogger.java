@@ -113,7 +113,7 @@ public class ConsoleLogger {
         }
     }
 
-    protected synchronized void writeLog(String message) {
+    protected static synchronized void writeLog(String message) {
         if (fileWriter != null) {
             try {
                 fileWriter.write(DATE_TIME_FORMATTER.format(LocalDateTime.now()));

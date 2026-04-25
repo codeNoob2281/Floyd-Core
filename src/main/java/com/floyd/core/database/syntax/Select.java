@@ -89,12 +89,20 @@ public abstract class Select implements Syntax {
     public List<Map<String, Field<?>>> execute() throws SQLException {
         try (Connection conn = DatabaseManager.instance.getConnection()) {
             String sql = getSql();
+            StringBuilder orderClause = new StringBuilder();
             if (ascendingColumn != null) {
-                sql += " ORDER BY " + ascendingColumn + " ASC";
+                orderClause.append(ascendingColumn).append(" ASC");
             }
             if (descendingColumn != null) {
-                sql += " ORDER BY " + descendingColumn + " DESC";
+                if (!orderClause.isEmpty()) {
+                    orderClause.append(", ");
+                }
+                orderClause.append(descendingColumn).append(" DESC");
             }
+            if (!orderClause.isEmpty()) {
+                sql += " ORDER BY " + orderClause;
+            }
+
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             if (whereArgs != null) {
                 for (int i = 0; i < whereArgs.length; i++) {

@@ -101,26 +101,27 @@ public abstract class Insert implements Syntax {
                 }
                 preparedStatement.executeUpdate();
                 if (returnFields != null && returnFields.length > 0) {
-                    Statement statement = connection.createStatement();
-                    ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID()");
                     int id = 0;
-                    if (resultSet.next()) {
-                        id = resultSet.getInt(1);
-                    }
-                    if (id == 0) {
-                        return Map.of();
+                    try (Statement statement = connection.createStatement();
+                         ResultSet resultSet = statement.executeQuery("SELECT LAST_INSERT_ID()")) {
+                        if (resultSet.next()) {
+                            id = resultSet.getInt(1);
+                        }
+                        if (id == 0) {
+                            return Map.of();
+                        }
                     }
                     List<Map<String, Field<?>>> result = Select.select(returnFields).from(tableName).where("id = ?", id).execute();
                     if (result.isEmpty()) {
                         return Map.of();
                     }
-                    return result.get(0);
+                    return result.getFirst();
                 } else {
                     return Map.of();
                 }
             } catch (SQLException e) {
                 logger.error("SQL: " + getSql());
-                logger.error("Param: " + Arrays.stream(fields).map(Field::getValue));
+                logger.error("Param: " + Arrays.toString(Arrays.stream(fields).map(Field::getValue).toArray()));
                 logger.error(e);
                 throw new SQLException("Error executing delete statement: " + e.getMessage(), e);
             }

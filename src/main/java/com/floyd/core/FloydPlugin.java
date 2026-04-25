@@ -9,16 +9,17 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author floyd
  */
 public abstract class FloydPlugin extends JavaPlugin {
 
-    private static FloydPlugin floydPlugin;
+    private static volatile FloydPlugin floydPlugin;
 
-    private final ConsoleLogger logger = ConsoleLoggerFactory.get(FloydPlugin.class);
+    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(FloydPlugin.class);
 
     private static final String LOG_FILE_NAME = "mc-plugin.log";
 

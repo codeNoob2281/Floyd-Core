@@ -74,9 +74,12 @@ public abstract class Update implements Syntax {
             for (Field<?> field : fields) {
                 preparedStatement.setObject(index++, field.getValue());
             }
-            for (Object arg : whereArgs) {
-                preparedStatement.setObject(index++, arg);
+            if (whereArgs != null) {
+                for (Object arg : whereArgs) {
+                    preparedStatement.setObject(index++, arg);
+                }
             }
+
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("SQL: " + getSql());

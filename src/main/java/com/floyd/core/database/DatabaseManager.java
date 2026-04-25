@@ -1,6 +1,8 @@
 package com.floyd.core.database;
 
 
+import com.floyd.core.logging.ConsoleLogger;
+import com.floyd.core.logging.ConsoleLoggerFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -10,6 +12,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DatabaseManager {
+
+    public static final ConsoleLogger logger = ConsoleLoggerFactory.get(DatabaseManager.class);
 
     public static DatabaseManager instance;
 
@@ -88,6 +92,13 @@ public class DatabaseManager {
      * Closes the database connection if it is open.
      */
     public void close() {
+        if (ds instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) ds).close();
+            } catch (Exception e) {
+                logger.error("Failed to close database connection", e);
+            }
+        }
         this.ds = null;
     }
 
