@@ -1,5 +1,5 @@
 /**
- * ORM相关，借鉴了<a href="https://github.com/LunaDeerMC/Dominion">Dominion</a>
+ * An easy implementation of ORM, reference: <a href="https://github.com/LunaDeerMC/Dominion">Dominion</a>
  *
  */
 package com.floyd.core.database;
