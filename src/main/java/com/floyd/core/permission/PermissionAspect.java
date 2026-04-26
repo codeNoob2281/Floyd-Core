@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -32,6 +34,14 @@ public class PermissionAspect {
             throw new PluginBizException("empty permission value is not allowed");
         }
 
+        // 如果是控制台发起的调用，默认有所有权限，直接执行
+        boolean isConsole = Arrays.stream(jp.getArgs())
+                .anyMatch(arg -> (arg instanceof ConsoleCommandSender || arg instanceof RemoteConsoleCommandSender));
+        if (isConsole) {
+            return jp.proceed();
+        }
+
+        // 校验玩家的权限
         Player issueCmdPlayer = Arrays.stream(jp.getArgs())
                 .filter(Player.class::isInstance)
                 .findFirst()
