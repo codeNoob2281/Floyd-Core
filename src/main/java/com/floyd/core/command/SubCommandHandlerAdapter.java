@@ -2,6 +2,9 @@ package com.floyd.core.command;
 
 import com.floyd.core.util.StrUtil;
 import org.jspecify.annotations.NonNull;
+import org.springframework.aop.support.AopUtils;
+import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,7 +17,10 @@ public class SubCommandHandlerAdapter implements CommandHandlerAdapter {
 
     @Override
     public CommandHandlerMapping getCommandHandlerMapping(Object handler) {
-        SubCommandHandler handlerAnnotation = handler.getClass().getAnnotation(SubCommandHandler.class);
+        SubCommandHandler handlerAnnotation = AnnotationUtils.findAnnotation(handler.getClass(), SubCommandHandler.class);
+        if (handlerAnnotation == null) {
+            throw new IllegalArgumentException("SubCommandHandler annotation is required");
+        }
         String rootCmd = handlerAnnotation.rootCommand();
         if (StrUtil.isBlank(rootCmd)) {
             throw new IllegalArgumentException("SubCommandHandler annotation value cannot be empty");
@@ -28,7 +34,8 @@ public class SubCommandHandlerAdapter implements CommandHandlerAdapter {
 
     private static @NonNull List<SubCommandMethodHandler> parseSubCommandMethodHandlers(Object handler) {
         List<SubCommandMethodHandler> methodHandlers = new ArrayList<>();
-        for (Method method : handler.getClass().getDeclaredMethods()) {
+        Method[] methods = ReflectionUtils.getDeclaredMethods(AopUtils.getTargetClass(handler));
+        for (Method method : methods) {
             SubCommandMapping subAnnotation = method.getAnnotation(SubCommandMapping.class);
             if (subAnnotation == null) {
                 continue;
@@ -49,7 +56,7 @@ public class SubCommandHandlerAdapter implements CommandHandlerAdapter {
         if (handler == null) {
             return false;
         }
-        SubCommandHandler handlerAnnotation = handler.getClass().getAnnotation(SubCommandHandler.class);
+        SubCommandHandler handlerAnnotation = AnnotationUtils.findAnnotation(handler.getClass(), SubCommandHandler.class);
         if (handlerAnnotation == null) {
             return false;
         }

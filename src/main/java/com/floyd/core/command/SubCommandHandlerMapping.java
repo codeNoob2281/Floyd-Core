@@ -8,6 +8,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,8 @@ public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping,
      *
      * @param handler the handler to register
      */
-    public void registerHandler(SubCommandMethodHandler handler) {
+    public void registerHandler(@NotNull SubCommandMethodHandler handler) {
+        Assert.notNull(handler, "Handler must not be null");
         if (handler.isFallback()) {
             if (this.fallbackHandler != null) {
                 throw new IllegalArgumentException("Only one fallback handler is allowed");
@@ -86,7 +88,9 @@ public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping,
             registerHandler(methodHandler);
         }
         // Don't forget to merge fallbackHandler
-        registerHandler(handlerMappingToBeMerge.fallbackHandler);
+        if (handlerMappingToBeMerge.fallbackHandler != null) {
+            registerHandler(handlerMappingToBeMerge.fallbackHandler);
+        }
     }
 
     @Override
