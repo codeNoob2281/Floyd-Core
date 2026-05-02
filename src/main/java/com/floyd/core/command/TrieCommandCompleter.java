@@ -1,6 +1,7 @@
 package com.floyd.core.command;
 
 import com.floyd.core.collection.Trie;
+import com.floyd.core.permission.PermissionUtil;
 import com.floyd.core.util.StrUtil;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -54,11 +55,13 @@ public class TrieCommandCompleter implements PermCheckCommandCompleter {
 
     @Override
     public void addCommand(String command, String permission) {
-        if (command == null || command.isEmpty()) {
+        if (StrUtil.isBlank(command)) {
             return;
         }
         addCommand(command);
-        commandPermissionMap.put(command, permission);
+        if (!StrUtil.isBlank(permission)) {
+            commandPermissionMap.put(command, permission);
+        }
     }
 
     @Override
@@ -100,7 +103,7 @@ public class TrieCommandCompleter implements PermCheckCommandCompleter {
         return fullCmdList.stream()
                 .filter(cmd -> {
                     String permission = commandPermissionMap.get(cmd);
-                    return permission == null || player.hasPermission(permission);
+                    return PermissionUtil.hasPermission(player, permission);
                 })
                 .collect(Collectors.toList());
     }
