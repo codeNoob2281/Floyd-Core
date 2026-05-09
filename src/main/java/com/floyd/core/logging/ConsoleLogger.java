@@ -3,8 +3,10 @@ package com.floyd.core.logging;
 import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.settings.properties.LoggingSettings;
 import com.floyd.core.util.FileUtil;
+import com.floyd.core.util.StrUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -12,15 +14,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author floyd
  */
 @Slf4j
-public class ConsoleLogger {
+public class ConsoleLogger implements Logger {
 
-    private static volatile Logger logger;
+    private static volatile java.util.logging.Logger logger;
 
     private static volatile File logFile;
 
@@ -50,7 +51,7 @@ public class ConsoleLogger {
      * @param logger  The logger
      * @param logFile The log file
      */
-    public static void initializeFirst(Logger logger, File logFile) {
+    public static void initializeFirst(java.util.logging.Logger logger, File logFile) {
         if (firstInitialized) {
             return;
         }
@@ -127,55 +128,58 @@ public class ConsoleLogger {
         }
     }
 
-    public void debug(String message) {
+    @Override
+    public void debug(String format, Object... args) {
         if (getLevel().include(LogLevel.DEBUG)) {
-            String debugMessage = "[DEBUG] " + message;
             // Since Paper MC's default log level is INFO, we use the INFO level to print debug logs
             // without modifying the server's log level configuration.
-            logger.info(debugMessage);
-            writeLog(debugMessage);
+            handleArgArrayCall(Level.INFO, "[DEBUG] " + format, args);
         }
     }
 
-    public void info(String message) {
+    @Override
+    public void info(String format, Object... args) {
         if (getLevel().include(LogLevel.INFO)) {
-            logger.info(message);
-            writeLog("[INFO] " + message);
+            handleArgArrayCall(Level.INFO, "[INFO] " + format, args);
         }
     }
 
-    public void warn(String message) {
+    @Override
+    public void warn(String format, Object... args) {
         if (getLevel().include(LogLevel.WARNING)) {
-            logger.warning(message);
-            writeLog("[WARN] " + message);
+            handleArgArrayCall(Level.WARNING, "[WARN] " + format, args);
         }
     }
 
-    public void error(String message) {
+    @Override
+    public void error(String format, Object... args) {
         if (getLevel().include(LogLevel.ERROR)) {
-            String errorMessage = "[ERROR] " + message;
-            logger.severe(errorMessage);
-            writeLog(errorMessage);
+            handleArgArrayCall(Level.SEVERE, "[ERROR] " + format, args);
         }
     }
 
+    @Override
     public void error(Throwable throwable) {
         if (getLevel().include(LogLevel.ERROR)) {
-            String errorMessage = "[ERROR] " + throwable.getMessage();
-            logger.log(Level.SEVERE, errorMessage, throwable);
-            writeLog(errorMessage + System.lineSeparator() + getStackTraceString(throwable));
+            handleArgArrayCall(Level.SEVERE, "[ERROR] " + throwable.getMessage(), throwable);
         }
     }
 
-    public void error(String message, Throwable throwable) {
-        if (getLevel().include(LogLevel.ERROR)) {
-            String errorMessage = "[ERROR] " + message;
-            logger.log(Level.SEVERE, errorMessage, throwable);
-            writeLog(errorMessage + System.lineSeparator() + getStackTraceString(throwable));
+    private static void handleArgArrayCall(Level level, String msgFormat, Object... args) {
+        Throwable throwableCandidate = MessageFormatter.getThrowableCandidate(args);
+        if (throwableCandidate != null) {
+            Object[] trimmedCopy = MessageFormatter.trimmedCopy(args);
+            String msg = StrUtil.format(msgFormat, trimmedCopy);
+            logger.log(level, msg, throwableCandidate);
+            writeLog(msg + System.lineSeparator() + getStackTraceString(throwableCandidate));
+        } else {
+            String msg = StrUtil.format(msgFormat, args);
+            logger.log(level, msg);
+            writeLog(msg);
         }
     }
 
-    private String getStackTraceString(Throwable throwable) {
+    private static String getStackTraceString(Throwable throwable) {
         StringWriter stringWriter = new StringWriter();
         throwable.printStackTrace(new PrintWriter(stringWriter));
         return stringWriter.toString();

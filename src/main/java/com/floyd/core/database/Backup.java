@@ -4,8 +4,8 @@ import com.floyd.core.database.fields.*;
 import com.floyd.core.database.syntax.Insert;
 import com.floyd.core.database.syntax.Select;
 import com.floyd.core.database.syntax.show.Show;
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class Backup {
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(Backup.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(Backup.class);
 
     public static void exportCsv(String tableName, File file, String orderKey) throws SQLException, IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -71,12 +71,12 @@ public class Backup {
     }
 
     public static void importCsv(String tableName, File file, String key) throws IOException, SQLException {
-        logger.warn("Importing " + tableName + " from " + file.getAbsolutePath());
+        logger.warn("Importing {} from {}", tableName, file.getAbsolutePath());
         try (BufferedReader reader = Files.newBufferedReader(file.toPath())) {
             // Read column names from first row
             String line = reader.readLine();
             if (line == null) {
-                logger.warn("Importing " + tableName + " finished (empty file)");
+                logger.warn("Importing {} finished (empty file)", tableName);
                 return;
             }
 
@@ -84,7 +84,7 @@ public class Backup {
             String[] columnsStr = line.split(",");
             line = reader.readLine();
             if (line == null) {
-                logger.warn("Importing " + tableName + " finished (missing type line)");
+                logger.warn("Importing {} finished (missing type line)", tableName);
                 return;
             }
             String[] types = line.split(",");
@@ -154,12 +154,12 @@ public class Backup {
 
                 rowCount++;
                 if (rowCount % 100 == 1) {
-                    logger.warn("Importing " + tableName + " " + (rowCount - 1) + " rows processed");
+                    logger.warn("Importing {} {} rows processed", tableName, rowCount - 1);
                 }
             }
 
-            logger.warn("Importing " + tableName + " " + rowCount + " rows processed\t\tProgress: 100%");
-            logger.warn("Importing " + tableName + " finished");
+            logger.warn("Importing {} {} rows processed\t\tProgress: 100%", tableName, rowCount);
+            logger.warn("Importing {} finished", tableName);
         }
     }
 

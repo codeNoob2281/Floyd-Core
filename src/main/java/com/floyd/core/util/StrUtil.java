@@ -1,5 +1,7 @@
 package com.floyd.core.util;
 
+import org.slf4j.helpers.MessageFormatter;
+
 /**
  * @author floyd
  */
@@ -48,5 +50,16 @@ public class StrUtil {
      */
     public static String defaultIfBlank(String str, String defaultValue) {
         return isBlank(str) ? defaultValue : str;
+    }
+
+    /**
+     * Format message
+     *
+     * @param format message template
+     * @param args   message arguments
+     * @return
+     */
+    public static String format(String format, Object... args) {
+        return MessageFormatter.arrayFormat(format, args).getMessage();
     }
 }
