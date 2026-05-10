@@ -1,8 +1,8 @@
 package com.floyd.core.database;
 
 
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class DatabaseManager {
 
-    public static final ConsoleLogger logger = ConsoleLoggerFactory.get(DatabaseManager.class);
+    public static final Logger logger = ConsoleLoggerFactory.get(DatabaseManager.class);
 
     public static DatabaseManager instance;
 

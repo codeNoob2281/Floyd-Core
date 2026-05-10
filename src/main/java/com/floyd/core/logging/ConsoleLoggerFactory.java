@@ -1,9 +1,7 @@
 package com.floyd.core.logging;
 
 import com.floyd.core.settings.PluginSettingsManager;
-import org.bukkit.configuration.Configuration;
 
-import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,7 +15,7 @@ public class ConsoleLoggerFactory {
     private static PluginSettingsManager settingsManager;
 
 
-    public static ConsoleLogger get(Class<?> clazz) {
+    public static Logger get(Class<?> clazz) {
         return LOGGER_MAP.computeIfAbsent(clazz, clazz1 -> {
             ConsoleLogger logger = new ConsoleLogger(clazz.getName());
             if (settingsManager != null) {

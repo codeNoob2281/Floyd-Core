@@ -3,8 +3,8 @@ package com.floyd.core.database.syntax;
 
 import com.floyd.core.database.DatabaseManager;
 import com.floyd.core.database.fields.Field;
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 
 import java.sql.*;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import static com.floyd.core.database.fields.Field.getFromResultSet;
 
 public abstract class Insert implements Syntax {
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(Insert.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(Insert.class);
 
     protected String tableName;
     protected Field<?>[] fields;
@@ -120,8 +120,8 @@ public abstract class Insert implements Syntax {
                     return Map.of();
                 }
             } catch (SQLException e) {
-                logger.error("SQL: " + getSql());
-                logger.error("Param: " + Arrays.toString(Arrays.stream(fields).map(Field::getValue).toArray()));
+                logger.error("SQL: {}" , getSql());
+                logger.error("Param: {}" , Arrays.toString(Arrays.stream(fields).map(Field::getValue).toArray()));
                 logger.error(e);
                 throw new SQLException("Error executing delete statement: " + e.getMessage(), e);
             }
@@ -175,8 +175,8 @@ public abstract class Insert implements Syntax {
                     return Map.of();
                 }
             } catch (SQLException e) {
-                logger.error("SQL: " + getSql());
-                logger.error("Param: " + Arrays.stream(fields).map(Field::getValue));
+                logger.error("SQL: {}" , getSql());
+                logger.error("Param: {}" , Arrays.stream(fields).map(Field::getValue).toList());
                 logger.error(e);
                 throw new SQLException("Error executing delete statement: " + e.getMessage(), e);
             }

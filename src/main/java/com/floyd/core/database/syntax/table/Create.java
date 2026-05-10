@@ -2,8 +2,8 @@ package com.floyd.core.database.syntax.table;
 
 import com.floyd.core.database.DatabaseManager;
 import com.floyd.core.database.syntax.Syntax;
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class Create implements Syntax {
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(Create.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(Create.class);
 
     protected String tableName;
     protected List<Column> columns = new ArrayList<>();
@@ -46,7 +46,7 @@ public abstract class Create implements Syntax {
              Statement statement = connection.createStatement()) {
             statement.executeUpdate(getSql());
         } catch (SQLException e) {
-            logger.error("SQL: " + getSql());
+            logger.error("SQL: {}", getSql());
             logger.error("执行SQL异常", e);
             throw new SQLException("Error executing CREATE TABLE statement: " + getSql(), e);
         }

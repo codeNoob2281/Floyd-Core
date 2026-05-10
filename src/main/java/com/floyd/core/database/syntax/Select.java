@@ -2,8 +2,8 @@ package com.floyd.core.database.syntax;
 
 import com.floyd.core.database.DatabaseManager;
 import com.floyd.core.database.fields.Field;
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +17,7 @@ import static com.floyd.core.database.fields.Field.getFromResultSet;
 
 public abstract class Select implements Syntax {
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(Select.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(Select.class);
 
     protected final Field<?>[] columns;
     protected final String columnsString;
@@ -112,8 +112,8 @@ public abstract class Select implements Syntax {
             ResultSet resultSet = preparedStatement.executeQuery();
             return getFromResultSet(columns, resultSet);
         } catch (SQLException e) {
-            logger.error("SQL: " + getSql());
-            logger.error("WHERE Param: " + Arrays.toString(whereArgs));
+            logger.error("SQL: {}" , getSql());
+            logger.error("WHERE Param: {}" , Arrays.toString(whereArgs));
             logger.error(e);
             throw new SQLException("Error executing query: " + e.getMessage());
         }

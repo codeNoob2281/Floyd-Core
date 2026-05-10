@@ -2,6 +2,7 @@ package com.floyd.core;
 
 import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.util.StrUtil;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +21,7 @@ public abstract class FloydPlugin extends JavaPlugin {
 
     private static volatile FloydPlugin floydPlugin;
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(FloydPlugin.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(FloydPlugin.class);
 
     private static final String LOG_FILE_NAME = "mc-plugin.log";
 
@@ -38,8 +39,8 @@ public abstract class FloydPlugin extends JavaPlugin {
         // Custom plugin initialization logic
         initialize();
         printBanner();
-        logger.info("Thank you for using plugin: " + getPluginName());
-        logger.info("Author: " + PluginConstants.AUTHOR);
+        logger.info("Thank you for using plugin: {}", getPluginName());
+        logger.info("Author: {}", PluginConstants.AUTHOR);
     }
 
     /**
@@ -69,8 +70,8 @@ public abstract class FloydPlugin extends JavaPlugin {
         // Close log file writer
         logger.info("Closing log file...");
         ConsoleLogger.closeFileWriter();
-        logger.info(getPluginName() + " plugin has been disabled, thank you for using");
-        logger.info("Author: " + PluginConstants.AUTHOR);
+        logger.info("{} plugin has been disabled, thank you for using", getPluginName());
+        logger.info("Author: {}", PluginConstants.AUTHOR);
     }
 
     /**

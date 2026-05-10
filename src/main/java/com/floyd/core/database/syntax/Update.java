@@ -2,8 +2,8 @@ package com.floyd.core.database.syntax;
 
 import com.floyd.core.database.DatabaseManager;
 import com.floyd.core.database.fields.Field;
-import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class Update implements Syntax {
 
-    private static final ConsoleLogger logger = ConsoleLoggerFactory.get(Update.class);
+    private static final Logger logger = ConsoleLoggerFactory.get(Update.class);
 
     protected final String tableName;
     protected Field<?>[] fields;
@@ -82,9 +82,9 @@ public abstract class Update implements Syntax {
 
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("SQL: " + getSql());
-            logger.error("SET Param: " + Arrays.stream(fields).map(Field::getValue));
-            logger.error("WHERE Param: " + List.of(whereArgs));
+            logger.error("SQL: {}", getSql());
+            logger.error("SET Param: {}", Arrays.stream(fields).map(Field::getValue).toList());
+            logger.error("WHERE Param: {}", List.of(whereArgs));
             logger.error(e);
             throw new SQLException("Error executing update: " + e.getMessage(), e);
         }
