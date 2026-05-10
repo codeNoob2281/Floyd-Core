@@ -1,0 +1,16 @@
+login:
+  username: Username
+  password: Password
+  login: Login
+  logout: Logout
+  register: Register
+  forget: Forgot Password
+  reset: Reset Password
+  username_placeholder: Please enter username
+  password_placeholder: Please enter password
+  username_required: Username cannot be empty
+  password_required: Password cannot be empty
+  username_invalid: Invalid username format
+  password_invalid: Invalid password format
+  username_exists: Username already exists
+  username_not_exists: Username does not exist

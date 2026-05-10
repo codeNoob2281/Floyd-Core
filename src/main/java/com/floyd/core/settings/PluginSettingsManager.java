@@ -5,14 +5,24 @@ import ch.jalu.configme.SettingsManagerImpl;
 import ch.jalu.configme.configurationdata.ConfigurationData;
 import ch.jalu.configme.migration.MigrationService;
 import ch.jalu.configme.resource.PropertyResource;
+import com.floyd.core.logging.ConsoleLoggerFactory;
+import com.floyd.core.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author floyd
  */
-public class PluginSettingsManager extends SettingsManagerImpl {
+public class PluginSettingsManager extends SettingsManagerImpl implements BeanPostProcessor {
+
+    private static final Logger logger = ConsoleLoggerFactory.get(PluginSettingsManager.class);
+
+    List<SettingsReloadAware> settingsReloadListeners;
 
     /**
      * Constructor. Use {@link SettingsManagerBuilder} to create instances.
@@ -25,5 +35,23 @@ public class PluginSettingsManager extends SettingsManagerImpl {
                                     @NotNull ConfigurationData configurationData,
                                     @Nullable MigrationService migrationService) {
         super(resource, configurationData, migrationService);
+        this.settingsReloadListeners = new ArrayList<>();
+    }
+
+    @Override
+    public void reload() {
+        super.reload();
+        settingsReloadListeners.forEach(listener -> {
+            logger.debug("Reloading settings for listener: {}", listener);
+            listener.onSettingsReload(this);
+        });
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+        if (bean instanceof SettingsReloadAware) {
+            settingsReloadListeners.add((SettingsReloadAware) bean);
+        }
+        return bean;
     }
 }

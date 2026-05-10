@@ -1,0 +1,9 @@
+logging:
+  file:
+    enable: false #Enable logging to a file
+  level: INFO #Log level
+i18n:
+  locale: zh_CN # Locale to use for internationalization
+  cache:
+    enable: true # Enable i18n message cache
+    expire-time: 30 #Cache expire time in seconds
