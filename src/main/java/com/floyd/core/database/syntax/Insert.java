@@ -176,7 +176,7 @@ public abstract class Insert implements Syntax {
                 }
             } catch (SQLException e) {
                 logger.error("SQL: {}" , getSql());
-                logger.error("Param: {}" , Arrays.stream(fields).map(Field::getValue));
+                logger.error("Param: {}" , Arrays.stream(fields).map(Field::getValue).toList());
                 logger.error(e);
                 throw new SQLException("Error executing delete statement: " + e.getMessage(), e);
             }

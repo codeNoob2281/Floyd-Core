@@ -58,15 +58,6 @@ public interface Logger {
     void error(Throwable throwable);
 
     /**
-     * Logs a message with a Throwable at ERROR level.
-     *
-     * @param format the message template, using {@code {}} as placeholders
-     * @param throwable the throwable to log
-     * @param args   the arguments to fill the placeholders
-     */
-    void error(String format, Throwable throwable, Object... args);
-
-    /**
      * Gets the name of this logger.
      *
      * @return the logger name

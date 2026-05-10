@@ -6,9 +6,13 @@ import com.floyd.core.util.FileUtil;
 import com.floyd.core.util.StrUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -166,23 +170,16 @@ public class ConsoleLogger implements Logger {
     }
 
     private static void handleArgArrayCall(Level level, String msgFormat, Object... args) {
-        Throwable throwableCandidate = MessageFormatter.getThrowableCandidate(args);
-        if (throwableCandidate != null) {
-            Object[] trimmedCopy = MessageFormatter.trimmedCopy(args);
-            String msg = StrUtil.format(msgFormat, trimmedCopy);
-            logger.log(level, msg, throwableCandidate);
-            writeLog(msg + System.lineSeparator() + getStackTraceString(throwableCandidate));
+        FormattingTuple formattingTuple = MessageFormatter.arrayFormat(msgFormat, args);
+        Throwable throwable = formattingTuple.getThrowable();
+        String message = formattingTuple.getMessage();
+        if (throwable != null) {
+            logger.log(level, message, throwable);
+            writeLog(message + System.lineSeparator() + StrUtil.getStackTraceString(throwable));
         } else {
-            String msg = StrUtil.format(msgFormat, args);
-            logger.log(level, msg);
-            writeLog(msg);
+            logger.log(level, message);
+            writeLog(message);
         }
-    }
-
-    private static String getStackTraceString(Throwable throwable) {
-        StringWriter stringWriter = new StringWriter();
-        throwable.printStackTrace(new PrintWriter(stringWriter));
-        return stringWriter.toString();
     }
 
 }

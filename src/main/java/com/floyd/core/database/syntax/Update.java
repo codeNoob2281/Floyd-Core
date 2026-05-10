@@ -83,7 +83,7 @@ public abstract class Update implements Syntax {
             return preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("SQL: {}", getSql());
-            logger.error("SET Param: {}", Arrays.stream(fields).map(Field::getValue));
+            logger.error("SET Param: {}", Arrays.stream(fields).map(Field::getValue).toList());
             logger.error("WHERE Param: {}", List.of(whereArgs));
             logger.error(e);
             throw new SQLException("Error executing update: " + e.getMessage(), e);
