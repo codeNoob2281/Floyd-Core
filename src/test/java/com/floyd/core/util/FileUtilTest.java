@@ -1,5 +1,6 @@
 package com.floyd.core.util;
 
+import com.floyd.core.BaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author floyd
  */
-class FileUtilTest {
+class FileUtilTest extends BaseTest {
 
     @TempDir
     File tempDir;

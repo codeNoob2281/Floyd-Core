@@ -1,5 +1,6 @@
 package com.floyd.core.util;
 
+import com.floyd.core.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author floyd
  */
-class StrUtilTest {
+class StrUtilTest extends BaseTest {
 
     @Test
     void testIsEmpty_WithNullString() {

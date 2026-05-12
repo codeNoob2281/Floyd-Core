@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mockStatic;
 /**
  * @author floyd
  */
-public abstract class AbstractSpringTest {
+public abstract class AbstractSpringTest extends BaseTest {
 
     static {
         ClassPathResource resource = new ClassPathResource("config.yml");

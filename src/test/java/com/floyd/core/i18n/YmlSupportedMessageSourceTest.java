@@ -1,5 +1,6 @@
 package com.floyd.core.i18n;
 
+import com.floyd.core.BaseTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.NoSuchMessageException;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author floyd
  */
-class YmlSupportedMessageSourceTest {
+class YmlSupportedMessageSourceTest extends BaseTest {
 
     private YmlSupportedMessageSource messageSource;
 
