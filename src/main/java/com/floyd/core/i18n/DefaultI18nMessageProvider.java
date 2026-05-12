@@ -56,6 +56,7 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
      */
     protected void refreshMessageSource(PluginSettingsManager settingsManager) {
         currentLocale = Locale.of(settingsManager.getProperty(I18nSettings.LOCALE));
+        logger.info("The config is reload. Current I18n message locale: {}", currentLocale);
         refreshMessageSourceCacheConfig(settingsManager);
     }
 

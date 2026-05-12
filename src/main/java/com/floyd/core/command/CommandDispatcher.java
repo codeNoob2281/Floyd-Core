@@ -7,6 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,10 +21,10 @@ public class CommandDispatcher implements BeanPostProcessor, SmartInitializingSi
 
     private final Map<String, CommandHandlerMapping> handlerMappingMap = new ConcurrentHashMap<>();
 
-    private final List<CommandHandlerAdapter> handlerAdapters;
+    private final List<CommandHandlerAdapter> handlerAdapters = new ArrayList<>();
 
-    public CommandDispatcher(List<CommandHandlerAdapter> handlerAdapters) {
-        this.handlerAdapters = handlerAdapters;
+    public void addHandlerAdapter(CommandHandlerAdapter handlerAdapter) {
+        this.handlerAdapters.add(handlerAdapter);
     }
 
     @Override

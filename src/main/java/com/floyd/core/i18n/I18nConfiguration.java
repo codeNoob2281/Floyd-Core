@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class I18nConfiguration implements ApplicationContextAware {
 
     @Bean
-    DefaultI18nMessageProvider i18nMessageProvider(PluginSettingsManager settingsManager) {
+    public DefaultI18nMessageProvider i18nMessageProvider(PluginSettingsManager settingsManager) {
         return new DefaultI18nMessageProvider(settingsManager);
     }
 

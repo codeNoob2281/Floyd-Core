@@ -9,8 +9,8 @@ import com.floyd.core.logging.ConsoleLoggerFactory;
 import com.floyd.core.logging.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +18,12 @@ import java.util.List;
 /**
  * @author floyd
  */
-public class PluginSettingsManager extends SettingsManagerImpl implements BeanPostProcessor {
+public class PluginSettingsManager extends SettingsManagerImpl {
 
     private static final Logger logger = ConsoleLoggerFactory.get(PluginSettingsManager.class);
 
+    @Autowired
+    @Lazy
     List<SettingsReloadAware> settingsReloadListeners;
 
     /**
@@ -45,13 +47,5 @@ public class PluginSettingsManager extends SettingsManagerImpl implements BeanPo
             logger.debug("Reloading settings for listener: {}", listener);
             listener.onSettingsReload(this);
         });
-    }
-
-    @Override
-    public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
-        if (bean instanceof SettingsReloadAware) {
-            settingsReloadListeners.add((SettingsReloadAware) bean);
-        }
-        return bean;
     }
 }
