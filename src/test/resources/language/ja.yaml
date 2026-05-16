@@ -1,0 +1,5 @@
+login:
+  username: ユーザー名
+  password: パスワード
+  password_invalid: パスワードの形式が無効です
+  xxxx: xxxx

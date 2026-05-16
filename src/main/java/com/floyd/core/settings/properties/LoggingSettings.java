@@ -1,9 +1,9 @@
 package com.floyd.core.settings.properties;
 
 import ch.jalu.configme.Comment;
-import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.properties.Property;
 import com.floyd.core.logging.LogLevel;
+import com.floyd.core.settings.PluginSettingsHolder;
 import org.springframework.stereotype.Component;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -12,7 +12,7 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
  * @author floyd
  */
 @Component
-public class LoggingSettings implements SettingsHolder {
+public class LoggingSettings implements PluginSettingsHolder {
 
     @Comment("Enable logging to a file")
     public static final Property<Boolean> ENABLE_LOGGING_FILE = newProperty("logging.file.enable", true);

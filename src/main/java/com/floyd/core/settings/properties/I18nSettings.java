@@ -1,8 +1,8 @@
 package com.floyd.core.settings.properties;
 
 import ch.jalu.configme.Comment;
-import ch.jalu.configme.SettingsHolder;
 import ch.jalu.configme.properties.Property;
+import com.floyd.core.settings.PluginSettingsHolder;
 import org.springframework.stereotype.Component;
 
 import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
@@ -11,13 +11,13 @@ import static ch.jalu.configme.properties.PropertyInitializer.newProperty;
  * @author floyd
  */
 @Component
-public class I18nSettings implements SettingsHolder {
+public class I18nSettings implements PluginSettingsHolder {
 
     @Comment("Locale to use for internationalization")
     public static final Property<String> LOCALE = newProperty("i18n.locale", "en");
 
     @Component
-    public static class Cache implements SettingsHolder {
+    public static class Cache implements PluginSettingsHolder {
 
         @Comment("Enable i18n message cache")
         public static final Property<Boolean> ENABLE = newProperty("i18n.cache.enable", true);

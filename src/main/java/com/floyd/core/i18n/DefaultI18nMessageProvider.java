@@ -1,14 +1,15 @@
 package com.floyd.core.i18n;
 
-import com.floyd.core.FloydPlugin;
+import ch.jalu.configme.SettingsManager;
 import com.floyd.core.logging.ConsoleLoggerFactory;
 import com.floyd.core.logging.Logger;
 import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.settings.SettingsReloadAware;
 import com.floyd.core.settings.properties.I18nSettings;
-import org.springframework.core.io.FileSystemResourceLoader;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -21,32 +22,25 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
 
     private static final Logger logger = ConsoleLoggerFactory.get(DefaultI18nMessageProvider.class);
 
-    private final YmlSupportedMessageSource messageSource;
+    protected static final int DEFAULT_EXPIRE_TIME = 60;
 
+    protected final I18nSettingManager i18nSettingManager;
+
+    @Setter
+    @Getter
     private volatile Locale currentLocale;
 
     private final ReadWriteLock accessLock;
 
-    public static final int DEFAULT_EXPIRE_TIME = 60;
+    // todo support cache
+    protected boolean cacheEnable;
+
+    private int cacheTtlSeconds = DEFAULT_EXPIRE_TIME;
 
 
-    public DefaultI18nMessageProvider(PluginSettingsManager settingsManager) {
-        this.messageSource = new YmlSupportedMessageSource();
+    public DefaultI18nMessageProvider(I18nSettingManager i18nSettingManager) {
+        this.i18nSettingManager = i18nSettingManager;
         this.accessLock = new ReentrantReadWriteLock();
-        initMessageSource();
-        refreshMessageSource(settingsManager);
-    }
-
-    /**
-     * Init message source
-     */
-    protected void initMessageSource() {
-        // Load from file system path
-        String fileSystemPathBaseName = Paths.get(FloydPlugin.getPluginDataPath().toString(), "language").toString();
-        messageSource.setBasenames(fileSystemPathBaseName + "/");
-        messageSource.setResourceLoader(new FileSystemResourceLoader());
-        messageSource.setDefaultLocale(Locale.ENGLISH);
-        messageSource.setFallbackToSystemLocale(false);
     }
 
     /**
@@ -54,10 +48,9 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
      *
      * @param settingsManager The settings manager
      */
-    protected void refreshMessageSource(PluginSettingsManager settingsManager) {
+    protected void updateCurrentLocale(PluginSettingsManager settingsManager) {
         currentLocale = Locale.of(settingsManager.getProperty(I18nSettings.LOCALE));
         logger.info("The config is reload. Current I18n message locale: {}", currentLocale);
-        refreshMessageSourceCacheConfig(settingsManager);
     }
 
     /**
@@ -65,7 +58,7 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
      *
      * @param settingsManager The settings manager
      */
-    protected void refreshMessageSourceCacheConfig(PluginSettingsManager settingsManager) {
+    protected void updateCacheConfig(PluginSettingsManager settingsManager) {
         Boolean enable = settingsManager.getProperty(I18nSettings.Cache.ENABLE);
         int expireTime = settingsManager.getProperty(I18nSettings.Cache.EXPIRE_TIME);
         if (enable) {
@@ -74,30 +67,21 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
                         expireTime, DEFAULT_EXPIRE_TIME);
                 expireTime = DEFAULT_EXPIRE_TIME;
             }
-            messageSource.setCacheSeconds(expireTime);
-        } else {
-            messageSource.setCacheSeconds(0);
         }
+        this.cacheEnable = enable;
+        this.cacheTtlSeconds = expireTime;
     }
 
 
     @Override
-    public String getMessage(String code, Object... args) {
+    public String getMessage(LocaleMessage localeMessage, Object... args) {
         Lock readLock = accessLock.readLock();
         readLock.lock();
         try {
-            return messageSource.getMessage(code, args, currentLocale);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    @Override
-    public String getMessageOrDefault(String code, String defaultMessage, Object... args) {
-        Lock readLock = accessLock.readLock();
-        readLock.lock();
-        try {
-            return messageSource.getMessage(code, args, defaultMessage, currentLocale);
+            SettingsManager settingsManager = i18nSettingManager.getSettingsManager(currentLocale);
+            String message = settingsManager.getProperty(localeMessage);
+            MessageFormat messageFormat = new MessageFormat(message);
+            return messageFormat.format(args);
         } finally {
             readLock.unlock();
         }
@@ -108,7 +92,9 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
         Lock writeLock = accessLock.writeLock();
         writeLock.lock();
         try {
-            refreshMessageSource(settingsManager);
+            updateCurrentLocale(settingsManager);
+            updateCacheConfig(settingsManager);
+            i18nSettingManager.reload(currentLocale);
         } finally {
             writeLock.unlock();
         }

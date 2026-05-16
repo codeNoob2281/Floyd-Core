@@ -30,18 +30,26 @@ public abstract class FloydPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         setPluginInstance(this);
+
         // Early initialize logger
         ConsoleLogger.initializeFirst(getLogger(), new File(getDataFolder(), LOG_FILE_NAME));
+
         // Initialize default config
         initConfig();
+
         // Initialize spring container
         initSpringApplication();
+
         // Initialize logger After spring application initialized
         PluginSettingsManager pluginSettingsManager = getApplicationContext().getBean(PluginSettingsManager.class);
+        pluginSettingsManager.reload();
         ConsoleLoggerFactory.reloadFromConfig(pluginSettingsManager);
+
         // Custom plugin initialization logic
         initialize();
+
         printBanner();
+
         logger.info("Thank you for using plugin: {}", getPluginName());
         logger.info("Author: {}", PluginConstants.AUTHOR);
     }

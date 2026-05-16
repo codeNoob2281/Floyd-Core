@@ -1,5 +1,6 @@
 package com.floyd.core.i18n;
 
+import ch.jalu.configme.properties.StringProperty;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.MessageFormat;
@@ -7,36 +8,38 @@ import java.text.MessageFormat;
 /**
  * @author floyd
  */
-public class LocaleMessage {
-
-    private final String code;
-
-    private final String defaultMessage;
+public class LocaleMessage extends StringProperty {
 
     protected static volatile I18nMessageProvider i18nMessageProvider;
 
-    public LocaleMessage(@NotNull String code, @NotNull String defaultMessage) {
-        this.code = code;
-        this.defaultMessage = defaultMessage;
+    public LocaleMessage(@NotNull String path, @NotNull String defaultMessage) {
+        super(path, defaultMessage);
     }
 
     public @NotNull String content(Object... args) {
         if (i18nMessageProvider == null) {
             if (args.length == 0) {
-                return defaultMessage;
+                return getDefaultValue();
             }
-            MessageFormat format = new MessageFormat(defaultMessage);
+            MessageFormat format = new MessageFormat(getDefaultValue());
             return format.format(args);
         }
 
-        return i18nMessageProvider.getMessageOrDefault(code, defaultMessage, args);
+        return i18nMessageProvider.getMessage(this, args);
     }
 
     public static void setI18nMessageProvider(I18nMessageProvider i18nMessageProvider) {
         LocaleMessage.i18nMessageProvider = i18nMessageProvider;
     }
 
-    public static LocaleMessage of(String code, String defaultMessage) {
-        return new LocaleMessage(code, defaultMessage);
+    /**
+     * Create a LocaleMessage
+     *
+     * @param path           The message path
+     * @param defaultMessage The default message
+     * @return The LocaleMessage
+     */
+    public static LocaleMessage of(String path, String defaultMessage) {
+        return new LocaleMessage(path, defaultMessage);
     }
 }

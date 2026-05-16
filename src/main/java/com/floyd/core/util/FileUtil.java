@@ -59,4 +59,21 @@ public class FileUtil {
         }
         return filename.substring(idx + 1);
     }
+
+    /**
+     * Get file name without suffix
+     *
+     * @param filename file name
+     * @return file name without suffix
+     */
+    public static String getFileNameWithoutSuffix(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int idx = filename.lastIndexOf(".");
+        if (idx == -1) {
+            return filename;
+        }
+        return filename.substring(0, idx);
+    }
 }
