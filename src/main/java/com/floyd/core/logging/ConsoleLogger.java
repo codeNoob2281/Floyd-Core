@@ -43,7 +43,7 @@ public class ConsoleLogger implements Logger {
     private final String name;
 
     @Getter
-    private LogLevel level;
+    private LogLevel level = LogLevel.INFO;
 
     public ConsoleLogger(String name) {
         this.name = name;

@@ -1,5 +1,6 @@
 package com.floyd.core.command;
 
+import com.floyd.core.BaseTest;
 import com.floyd.core.collection.Trie;
 import com.floyd.core.util.StrUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author floyd
  */
-class TrieCommandCompleterTest {
+class TrieCommandCompleterTest extends BaseTest {
 
     private TrieCommandCompleter completer;
 

@@ -1,5 +1,6 @@
 package com.floyd.core.permission;
 
+import com.floyd.core.BaseTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-public class DemoCommandExecutor implements CommandExecutor {
+public class DemoCommandExecutor extends BaseTest implements CommandExecutor {
 
 
     @Override

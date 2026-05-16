@@ -1,10 +1,7 @@
 package com.floyd.core.util;
 
-import com.floyd.core.PluginBizException;
-
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 /**
  * @author floyd
@@ -44,5 +41,39 @@ public class FileUtil {
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(content.getBytes(charset));
         }
+    }
+
+    /**
+     * Get file suffix
+     *
+     * @param filename file name
+     * @return file suffix
+     */
+    public static String getFileNameSuffix(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int idx = filename.lastIndexOf(".");
+        if (idx == -1) {
+            return null;
+        }
+        return filename.substring(idx + 1);
+    }
+
+    /**
+     * Get file name without suffix
+     *
+     * @param filename file name
+     * @return file name without suffix
+     */
+    public static String getFileNameWithoutSuffix(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int idx = filename.lastIndexOf(".");
+        if (idx == -1) {
+            return filename;
+        }
+        return filename.substring(0, idx);
     }
 }

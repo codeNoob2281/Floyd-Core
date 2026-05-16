@@ -1,7 +1,10 @@
 package com.floyd.core.command;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 
 import java.util.List;
 
@@ -12,12 +15,14 @@ import java.util.List;
 public class CommandDispatcherConfiguration {
 
     @Bean
-    CommandDispatcher commandDispatcher(List<CommandHandlerAdapter> handlerAdapters) {
-        return new CommandDispatcher(handlerAdapters);
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public static CommandDispatcher commandDispatcher(ObjectProvider<List<CommandHandlerAdapter>> adapterProvider) {
+        return new CommandDispatcher(adapterProvider);
     }
 
     @Bean
-    SubCommandHandlerAdapter subCommandHandlerAdapter() {
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public static SubCommandHandlerAdapter subCommandHandlerAdapter() {
         return new SubCommandHandlerAdapter();
     }
 }

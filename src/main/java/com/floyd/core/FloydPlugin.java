@@ -30,15 +30,26 @@ public abstract class FloydPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         setPluginInstance(this);
+
+        // Early initialize logger
+        ConsoleLogger.initializeFirst(getLogger(), new File(getDataFolder(), LOG_FILE_NAME));
+
         // Initialize default config
         initConfig();
+
         // Initialize spring container
         initSpringApplication();
-        // Initialize logger
-        initConsoleLogger();
+
+        // Initialize logger After spring application initialized
+        PluginSettingsManager pluginSettingsManager = getApplicationContext().getBean(PluginSettingsManager.class);
+        pluginSettingsManager.reload();
+        ConsoleLoggerFactory.reloadFromConfig(pluginSettingsManager);
+
         // Custom plugin initialization logic
         initialize();
+
         printBanner();
+
         logger.info("Thank you for using plugin: {}", getPluginName());
         logger.info("Author: {}", PluginConstants.AUTHOR);
     }
@@ -128,12 +139,6 @@ public abstract class FloydPlugin extends JavaPlugin {
             throw new IllegalStateException("fail to get spring application context, please make sure the plugin is initialized");
         }
         return applicationContext;
-    }
-
-    protected void initConsoleLogger() {
-        ConsoleLogger.initializeFirst(getLogger(), new File(getDataFolder(), LOG_FILE_NAME));
-        PluginSettingsManager pluginSettingsManager = getApplicationContext().getBean(PluginSettingsManager.class);
-        ConsoleLoggerFactory.reloadFromConfig(pluginSettingsManager);
     }
 
     public abstract String getPluginName();
