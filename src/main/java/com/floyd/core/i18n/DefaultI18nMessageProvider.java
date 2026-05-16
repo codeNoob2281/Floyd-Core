@@ -53,8 +53,10 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
         try {
             SettingsManager settingsManager = i18nSettingManager.getSettingsManager(currentLocale);
             String message = settingsManager.getProperty(localeMessage);
-            MessageFormat messageFormat = new MessageFormat(message);
-            return messageFormat.format(args);
+            if (args == null || args.length == 0) {
+                return message;
+            }
+            return new MessageFormat(message).format(args);
         } finally {
             readLock.unlock();
         }

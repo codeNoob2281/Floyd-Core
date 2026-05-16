@@ -41,7 +41,7 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
 
     protected final Map<String, Resource> buildInMessageResourceMap;
 
-    protected Map<String, SettingsManager> localeSettingsManagerMap;
+    protected final Map<String, SettingsManager> localeSettingsManagerMap;
 
     public I18nSettingManagerImpl(List<I18nMessageHolder> i18nMessageHolders) {
         this.i18nMessageHolders = i18nMessageHolders.stream()
@@ -129,7 +129,7 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
             StringProperty stringProperty = new StringProperty(path, defaultValue);
             stringPropertyMap.put(path, stringProperty);
         }
-        ConfigurationDataBuilder.createConfiguration(i18nMessageHolders);
+
         // Load StringProperty from i18nMessageHolders
         List<Property<?>> defaultProperties = ConfigurationDataBuilder.createConfiguration(i18nMessageHolders).getProperties();
         for (Property<?> defaultProperty : defaultProperties) {
@@ -142,17 +142,20 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
         // Get config PropertyResource
         File configYamlFile =
                 Path.of(FloydPlugin.getPluginDataPath().toString(), "language", Objects.requireNonNull(resource.getFilename())).toFile();
-        if (!configYamlFile.exists()) {
-            configYamlFile.createNewFile();
-        }
         PropertyResource propertyResource = new YamlFileResource(configYamlFile.toPath());
 
+
         // Build settingsManager
-        return SettingsManagerBuilder
+        SettingsManager settingsManager = SettingsManagerBuilder
                 .withResource(propertyResource)
                 .configurationData(configurationData)
                 .migrationService(new PlainMigrationService())
                 .create();
+
+        if (!configYamlFile.exists()) {
+            settingsManager.save();
+        }
+        return settingsManager;
     }
 
     protected String getLocaleMappingKey(Locale locale) {
