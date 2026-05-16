@@ -50,23 +50,26 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
         this.buildInMessageResourceMap = new ConcurrentHashMap<>();
         this.localeSettingsManagerMap = new ConcurrentHashMap<>();
         scanMessageResources();
-        initSettingsManagers();
+        initBuildInSettingsManagers();
+        scanCustomMessageResources();
     }
 
     @Override
     public synchronized void reloadAll() {
         logger.info("Reload all i18n message config");
+        scanCustomMessageResources();
         localeSettingsManagerMap.values()
                 .forEach(SettingsManager::reload);
     }
 
     @Override
     public synchronized void reload(Locale locale) {
-        logger.info("Reload i18n message config, current locale is {}", locale);
+        logger.info("Reload i18n message config: {}", locale);
         SettingsManager settingsManager = localeSettingsManagerMap.get(getLocaleMappingKey(locale));
         if (settingsManager != null) {
             settingsManager.reload();
         }
+        scanCustomMessageResources();
     }
 
     @Override
@@ -102,9 +105,29 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
         }
     }
 
-    protected void initSettingsManagers() {
+    protected void scanCustomMessageResources() {
+        File languageDir = Path.of(FloydPlugin.getPluginDataPath().toString(), "language").toFile();
+        if (!languageDir.exists() || !languageDir.isDirectory()) {
+            return;
+        }
+        File[] files = languageDir.listFiles((dir, name) ->
+                name.endsWith(".yml") || name.endsWith(".yaml"));
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            String localeName = FileUtil.getFileNameWithoutSuffix(file.getName()).toLowerCase();
+            if (!localeSettingsManagerMap.containsKey(localeName)) {
+                SettingsManager settingsManager = buildCustomSettingManager(file);
+                localeSettingsManagerMap.put(localeName, settingsManager);
+                logger.info("Loaded custom i18n locale from plugin directory: {}", localeName);
+            }
+        }
+    }
+
+    protected void initBuildInSettingsManagers() {
         buildInMessageResourceMap.forEach((localeName, resource) -> {
-            SettingsManager settingsManager = buildSettingManager(resource);
+            SettingsManager settingsManager = buildBuildInSettingManager(resource);
             // Reload first to sync configs
             settingsManager.reload();
             localeSettingsManagerMap.put(localeName, settingsManager);
@@ -112,7 +135,7 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
     }
 
     @SneakyThrows
-    protected SettingsManager buildSettingManager(Resource resource) {
+    protected SettingsManager buildBuildInSettingManager(Resource resource) {
         // Load properties
         YamlPropertiesFactoryBean factoryBean = new YamlPropertiesFactoryBean();
         factoryBean.setResources(resource);
@@ -156,6 +179,21 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
             settingsManager.save();
         }
         return settingsManager;
+    }
+
+    protected SettingsManager buildCustomSettingManager(File file) {
+        // Build configurationData
+        ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(i18nMessageHolders);
+
+        // Get config PropertyResource
+        PropertyResource propertyResource = new YamlFileResource(file.toPath());
+
+        // Build settingsManager
+        return SettingsManagerBuilder
+                .withResource(propertyResource)
+                .configurationData(configurationData)
+                .migrationService(new PlainMigrationService())
+                .create();
     }
 
     protected String getLocaleMappingKey(Locale locale) {
