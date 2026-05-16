@@ -106,7 +106,7 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
     }
 
     protected void scanCustomMessageResources() {
-        File languageDir = Path.of(FloydPlugin.getPluginDataPath().toString(), "language").toFile();
+        File languageDir = getLanguageConfigDir();
         if (!languageDir.exists() || !languageDir.isDirectory()) {
             return;
         }
@@ -163,8 +163,15 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
         ConfigurationData configurationData = ConfigurationDataBuilder.createConfiguration(new ArrayList<>(stringPropertyMap.values()));
 
         // Get config PropertyResource
-        File configYamlFile =
-                Path.of(FloydPlugin.getPluginDataPath().toString(), "language", Objects.requireNonNull(resource.getFilename())).toFile();
+        File languageConfigDir = getLanguageConfigDir();
+        if (!languageConfigDir.exists()) {
+            languageConfigDir.mkdirs();
+        }
+        File configYamlFile = Path.of(languageConfigDir.toString(), Objects.requireNonNull(resource.getFilename())).toFile();
+        // Create Empty file if not exist
+        if (!configYamlFile.exists()) {
+            configYamlFile.createNewFile();
+        }
         PropertyResource propertyResource = new YamlFileResource(configYamlFile.toPath());
 
 
@@ -194,6 +201,10 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
                 .configurationData(configurationData)
                 .migrationService(new PlainMigrationService())
                 .create();
+    }
+
+    protected File getLanguageConfigDir() {
+        return Path.of(FloydPlugin.getPluginDataPath().toString(), "language").toFile();
     }
 
     protected String getLocaleMappingKey(Locale locale) {
