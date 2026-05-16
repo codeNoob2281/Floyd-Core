@@ -22,8 +22,6 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
 
     private static final Logger logger = ConsoleLoggerFactory.get(DefaultI18nMessageProvider.class);
 
-    protected static final int DEFAULT_EXPIRE_TIME = 60;
-
     protected final I18nSettingManager i18nSettingManager;
 
     @Setter
@@ -31,11 +29,6 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
     private volatile Locale currentLocale;
 
     private final ReadWriteLock accessLock;
-
-    // todo support cache
-    protected boolean cacheEnable;
-
-    private int cacheTtlSeconds = DEFAULT_EXPIRE_TIME;
 
 
     public DefaultI18nMessageProvider(I18nSettingManager i18nSettingManager) {
@@ -52,26 +45,6 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
         currentLocale = Locale.of(settingsManager.getProperty(I18nSettings.LOCALE));
         logger.info("The config is reload. Current I18n message locale: {}", currentLocale);
     }
-
-    /**
-     * Refresh message source cache config
-     *
-     * @param settingsManager The settings manager
-     */
-    protected void updateCacheConfig(PluginSettingsManager settingsManager) {
-        Boolean enable = settingsManager.getProperty(I18nSettings.Cache.ENABLE);
-        int expireTime = settingsManager.getProperty(I18nSettings.Cache.EXPIRE_TIME);
-        if (enable) {
-            if (expireTime <= 0) {
-                logger.warn("I18n message cache expire time must be greater than 0 but got {}. Use default value {} instead.",
-                        expireTime, DEFAULT_EXPIRE_TIME);
-                expireTime = DEFAULT_EXPIRE_TIME;
-            }
-        }
-        this.cacheEnable = enable;
-        this.cacheTtlSeconds = expireTime;
-    }
-
 
     @Override
     public String getMessage(LocaleMessage localeMessage, Object... args) {
@@ -93,7 +66,6 @@ public class DefaultI18nMessageProvider implements I18nMessageProvider, Settings
         writeLock.lock();
         try {
             updateCurrentLocale(settingsManager);
-            updateCacheConfig(settingsManager);
             i18nSettingManager.reload(currentLocale);
         } finally {
             writeLock.unlock();
