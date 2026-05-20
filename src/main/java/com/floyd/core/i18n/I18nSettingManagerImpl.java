@@ -65,10 +65,8 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
     @Override
     public synchronized void reload(Locale locale) {
         logger.info("Reload i18n message config: {}", locale);
-        SettingsManager settingsManager = localeSettingsManagerMap.get(getLocaleMappingKey(locale));
-        if (settingsManager != null) {
-            settingsManager.reload();
-        }
+        SettingsManager settingsManager = getSettingsManager(locale);
+        settingsManager.reload();
         scanCustomMessageResources();
     }
 
@@ -77,7 +75,11 @@ public class I18nSettingManagerImpl implements I18nSettingManager {
         if (locale == null) {
             return localeSettingsManagerMap.get(DEFAULT_LOCALE_NAME);
         }
+        // Try locale with language+region first (e.g., zh_CN), then language only (e.g., zh), fallback to default
         SettingsManager settingsManager = localeSettingsManagerMap.get(getLocaleMappingKey(locale));
+        if (settingsManager == null) {
+            settingsManager = localeSettingsManagerMap.get(locale.getLanguage().toLowerCase());
+        }
         if (settingsManager == null) {
             settingsManager = localeSettingsManagerMap.get(DEFAULT_LOCALE_NAME);
         }
