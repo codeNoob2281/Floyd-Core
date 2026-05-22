@@ -55,7 +55,7 @@ Floyd-Core 是一个轻量级的 Minecraft 插件开发框架，基于 Spring Fr
 
 - **Java**: 21+
 - **Spring Framework**: 6.2.7
-- **PaperMC API**: 1.21.11
+- **PaperMC API**: 1.20.6
 - **Lombok**: 1.18.30
 - **AspectJ**: 1.9.7
 

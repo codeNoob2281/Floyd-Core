@@ -9,7 +9,7 @@
 - **JDK 21** 或更高版本
 - **Maven 3.6+**
 - **IDE**: IntelliJ IDEA（推荐）或 Eclipse
-- **服务器**: PaperMC 1.21.11+
+- **服务器**: PaperMC 1.20.6+
 
 ### 验证安装
 

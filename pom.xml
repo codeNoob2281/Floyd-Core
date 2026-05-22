@@ -17,7 +17,7 @@
         <dependencies.configme.version>1.4.1</dependencies.configme.version>
         <dependencies.junit.version>5.11.0</dependencies.junit.version>
         <dependencies.mockito.version>5.21.0</dependencies.mockito.version>
-        <dependencies.paper-api.version>1.21.11-R0.1-SNAPSHOT</dependencies.paper-api.version>
+        <dependencies.paper-api.version>1.20.6-R0.1-SNAPSHOT</dependencies.paper-api.version>
     </properties>
 
     <build>
