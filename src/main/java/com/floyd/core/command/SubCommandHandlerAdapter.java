@@ -1,7 +1,7 @@
 package com.floyd.core.command;
 
 import com.floyd.core.util.StrUtil;
-import org.jspecify.annotations.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ReflectionUtils;
@@ -32,7 +32,7 @@ public class SubCommandHandlerAdapter implements CommandHandlerAdapter {
         return handlerMapping;
     }
 
-    private static @NonNull List<SubCommandMethodHandler> parseSubCommandMethodHandlers(Object handler) {
+    private static @NotNull List<SubCommandMethodHandler> parseSubCommandMethodHandlers(Object handler) {
         List<SubCommandMethodHandler> methodHandlers = new ArrayList<>();
         Method[] methods = ReflectionUtils.getDeclaredMethods(AopUtils.getTargetClass(handler));
         for (Method method : methods) {

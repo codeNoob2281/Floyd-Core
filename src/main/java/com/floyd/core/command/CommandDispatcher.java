@@ -1,8 +1,7 @@
 package com.floyd.core.command;
 
 import org.bukkit.Bukkit;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.SmartInitializingSingleton;
@@ -32,7 +31,7 @@ public class CommandDispatcher implements BeanPostProcessor, SmartInitializingSi
     }
 
     @Override
-    public @Nullable Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+    public Object postProcessAfterInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
         deferredBeans.add(bean);
         return bean;
     }

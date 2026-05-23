@@ -2,7 +2,7 @@
 
 [![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://openjdk.java.net/)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-red.svg)](https://maven.apache.org/)
-[![PaperMC](https://img.shields.io/badge/PaperMC-1.21.11-green.svg)](https://papermc.io/)
+[![PaperMC](https://img.shields.io/badge/PaperMC-1.20.6-green.svg)](https://papermc.io/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 ---
@@ -27,13 +27,13 @@ Floyd-Core is a lightweight Minecraft plugin development framework built on Spri
 
 - **Java**: 21 or higher
 - **Maven**: 3.6 or higher
-- **Server**: PaperMC 1.21.11 or higher
+- **Server**: PaperMC 1.20.6 or higher
 
 ## 📦 Dependencies
 
 - Spring Framework 6.2.7
 - Lombok 1.18.30
-- PaperMC API 1.21.11
+- PaperMC API 1.20.6
 - AspectJ 1.9.7
 
 ## 🚀 Quick Start
@@ -444,7 +444,7 @@ Contributions are welcome! Please follow these steps:
 ### Known Limitations
 
 - Requires Java 21 (due to Spring Framework 6.x requirements)
-- Only compatible with PaperMC 1.21.11+
+- Only compatible with PaperMC 1.20.6+
 - GitHub Packages requires authentication for downloads
 
 ### Roadmap
