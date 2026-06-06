@@ -1,23 +1,16 @@
 package com.floyd.core.command;
 
 import com.floyd.core.util.StrUtil;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author floyd
  */
-public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping, CommandExecutor, TabCompleter {
+public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping {
 
     private final TrieCommandCompleter commandCompleter = new TrieCommandCompleter();
 
@@ -69,8 +62,8 @@ public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping,
     }
 
     @Override
-    public CommandExecutor getCommandExecutor() {
-        return this;
+    public PermCheckCommandCompleter getCommandCompleter() {
+        return this.commandCompleter;
     }
 
     @Override
@@ -94,19 +87,7 @@ public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping,
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        SubCommandMethodHandler mappingHandler = findMappingHandler(args);
-        if (mappingHandler == null) {
-            return false;
-        }
-        int subCmdLen = mappingHandler.getSubCommands() == null ? 0 : mappingHandler.getSubCommands().length;
-        String[] subCmdArgs = new String[args.length - subCmdLen];
-        System.arraycopy(args, subCmdLen, subCmdArgs, 0, args.length - subCmdLen);
-        SubCommandInvokeResult invokeResult = mappingHandler.invoke(sender, subCmdArgs);
-        return invokeResult.isCommandValid();
-    }
-
-    SubCommandMethodHandler findMappingHandler(String[] args) {
+    public SubCommandMethodHandler getMethodHandler(String[] args) {
         SubCommandMethodHandler mostMatchHandler = null;
         if (args == null || args.length == 0) {
             mostMatchHandler = methodHandlerMap.get(ROOT_MAPPING_KEY);
@@ -122,16 +103,6 @@ public class SubCommandHandlerMapping implements MergeableCommandHandlerMapping,
             }
         }
         return mostMatchHandler != null ? mostMatchHandler : this.fallbackHandler;
-    }
-
-
-    @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        if (sender instanceof Player) {
-            return commandCompleter.nextArgs((Player) sender, command.getName(), args);
-        } else {
-            return commandCompleter.nextArgs(command.getName(), args);
-        }
     }
 
 

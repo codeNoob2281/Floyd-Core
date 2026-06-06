@@ -65,7 +65,7 @@ public class CommandDispatcher implements BeanPostProcessor, SmartInitializingSi
 
         handlerMappingMap.forEach((rootCmd, commandHandlerMapping) -> {
             Bukkit.getPluginCommand(rootCmd)
-                    .setExecutor(commandHandlerMapping.getCommandExecutor());
+                    .setExecutor(new SubCommandExecutor(commandHandlerMapping));
         });
     }
 }
