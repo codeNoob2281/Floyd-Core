@@ -50,6 +50,13 @@ Tests use JUnit 5 + Mockito. Abstract base classes:
 - `BaseTest` — Initializes `ConsoleLogger` via `@BeforeAll`
 - `AbstractSpringTest` — Extends `BaseTest`, creates Spring context from `SpringTestConfig` (`@ComponentScan("com.floyd.core")`), mocks `FloydPlugin.getPluginDataPath()`
 
+## Code Style Rules
+
+All code must follow these rules. See [java-code-style.md](.claude/rules/java-code-style.md) for full details.
+
+- **Comments**: All comments and Javadoc must be written in English
+- **Braces**: All `if`, `else`, `for`, `while`, and `do-while` statements must use braces `{}`
+
 ## Commit Rules
 
 Commits must use **English** and follow conventional commits format. See [commit-message.md](.claude/rules/commit-message.md) for full details.
