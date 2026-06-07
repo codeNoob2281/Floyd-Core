@@ -1,18 +1,16 @@
 package com.floyd.core.command;
 
-import org.bukkit.command.CommandExecutor;
-
 /**
  * @author floyd
  */
 public interface CommandHandlerMapping {
 
     /**
-     * Get the command executor
+     * Get the command completer
      *
-     * @return the command executor
+     * @return the command completer
      */
-    CommandExecutor getCommandExecutor();
+    PermCheckCommandCompleter getCommandCompleter();
 
     /**
      * Get the root command
@@ -20,4 +18,13 @@ public interface CommandHandlerMapping {
      * @return the root command
      */
     String rootCommand();
+
+
+    /**
+     * Get the method handler
+     *
+     * @param args the command args
+     * @return the method handler
+     */
+    SubCommandMethodHandler getMethodHandler(String[] args);
 }
