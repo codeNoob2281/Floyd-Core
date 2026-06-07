@@ -1,5 +1,6 @@
 package com.floyd.core.command;
 
+import com.floyd.core.command.param.*;
 import com.floyd.core.common.convert.TypeConversionException;
 import com.floyd.core.common.convert.TypeConverter;
 import com.floyd.core.permission.PermissionUtil;
@@ -8,9 +9,12 @@ import lombok.Data;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,6 +89,26 @@ public class SubCommandMethodHandler {
         } catch (Exception e) {
             throw new CommandInvokeException("Error invoking method: " + method.getName(), e);
         }
+    }
+
+    /**
+     * Get the next argument for the given command
+     *
+     * @param paramIdx      the index of the current argument to complete
+     * @param commandSender the command sender
+     * @param partial       the partial command input
+     * @return list of possible completions
+     * @return
+     */
+    public @NotNull List<String> completeParam(int paramIdx, CommandSender commandSender, String partial) {
+        if (paramIdx < 0 || paramIdx >= parameterBindings.size()) {
+            return new ArrayList<>();
+        }
+        ParameterCompleter completer = parameterBindings.get(paramIdx).getCompleter();
+        if (completer == null) {
+            return new ArrayList<>();
+        }
+        return completer.complete(commandSender, partial);
     }
 
     /**

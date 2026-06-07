@@ -1,4 +1,4 @@
-package com.floyd.core.command;
+package com.floyd.core.command.param;
 
 import java.lang.annotation.*;
 

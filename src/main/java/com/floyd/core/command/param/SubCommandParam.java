@@ -1,4 +1,4 @@
-package com.floyd.core.command;
+package com.floyd.core.command.param;
 
 import java.lang.annotation.*;
 
@@ -36,4 +36,10 @@ public @interface SubCommandParam {
      * Only meaningful for non-object type parameters.
      */
     String defaultValue() default "";
+
+    /**
+     * Parameter completer class.
+     * Defaults to BlankParameterCompleter.
+     */
+    String completer() default "";
 }

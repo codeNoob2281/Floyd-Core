@@ -1,6 +1,5 @@
-package com.floyd.core.command;
+package com.floyd.core.command.param;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
@@ -21,6 +20,7 @@ public class ParameterBinding {
     private final String description;
     private final boolean required;
     private final String defaultValue;
+    private final ParameterCompleter completer;
 
     // === BODY ===
     private final Class<?> bodyType;
@@ -34,6 +34,7 @@ public class ParameterBinding {
         this.required = builder.required;
         this.defaultValue = builder.defaultValue;
         this.bodyType = builder.bodyType;
+        this.completer = builder.completer;
     }
 
     // ==================== Builder ====================
@@ -52,6 +53,7 @@ public class ParameterBinding {
         private String description = "";
         private boolean required = true;
         private String defaultValue = "";
+        private ParameterCompleter completer;
 
         // BODY field
         private Class<?> bodyType;
@@ -92,6 +94,11 @@ public class ParameterBinding {
 
         public Builder bodyType(Class<?> bodyType) {
             this.bodyType = bodyType;
+            return this;
+        }
+
+        public Builder parameterCompleter(String completer) {
+            this.completer = ParameterCompleterFactory.create(completer);
             return this;
         }
 

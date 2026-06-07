@@ -1,5 +1,7 @@
 package com.floyd.core.command;
 
+import com.floyd.core.command.param.SubCommandBody;
+import com.floyd.core.command.param.SubCommandParam;
 import com.floyd.core.logging.ConsoleLogger;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeAll;

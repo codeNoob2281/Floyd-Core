@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,24 +26,37 @@ public class SubCommandExecutor implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
-        SubCommandMethodHandler mappingHandler = commandHandlerMapping.getMethodHandler(args);
-        if (mappingHandler == null) {
+        SubCommandMethodHandler methodHandler = commandHandlerMapping.getMethodHandler(args);
+        if (methodHandler == null) {
             return false;
         }
-        int subCmdLen = mappingHandler.getSubCommands() == null ? 0 : mappingHandler.getSubCommands().length;
+        int subCmdLen = methodHandler.getSubCommands() == null ? 0 : methodHandler.getSubCommands().length;
         String[] subCmdArgs = new String[args.length - subCmdLen];
         System.arraycopy(args, subCmdLen, subCmdArgs, 0, args.length - subCmdLen);
-        SubCommandInvokeResult invokeResult = mappingHandler.invoke(sender, subCmdArgs);
+        SubCommandInvokeResult invokeResult = methodHandler.invoke(sender, subCmdArgs);
         return invokeResult.isCommandValid();
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         PermCheckCommandCompleter commandCompleter = commandHandlerMapping.getCommandCompleter();
+        List<String> results = null;
         if (sender instanceof Player) {
-            return commandCompleter.nextArgs((Player) sender, command.getName(), args);
+            results = commandCompleter.nextArgs((Player) sender, command.getName(), args);
         } else {
-            return commandCompleter.nextArgs(command.getName(), args);
+            results = commandCompleter.nextArgs(command.getName(), args);
         }
+        if (results != null && !results.isEmpty()) {
+            return results;
+        }
+
+        SubCommandMethodHandler methodHandler = commandHandlerMapping.getMethodHandler(args);
+        if (methodHandler != null) {
+            int subCmdLen = methodHandler.getSubCommands() == null ? 0 : methodHandler.getSubCommands().length;
+            int paramIdx = args.length - subCmdLen;
+            results = methodHandler.completeParam(paramIdx, sender, args[args.length - 1]);
+        }
+
+        return results != null ? results : new ArrayList<>();
     }
 }
