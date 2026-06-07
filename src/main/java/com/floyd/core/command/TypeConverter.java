@@ -59,7 +59,7 @@ public class TypeConverter {
 
         // Enum
         if (targetType.isEnum()) {
-            return Enum.valueOf((Class<Enum>) targetType, value.toUpperCase());
+            return parseEnum(targetType, value);
         }
 
         // UUID
@@ -78,5 +78,21 @@ public class TypeConverter {
             default -> throw new TypeConversionException(
                     "Cannot convert '" + value + "' to boolean");
         };
+    }
+
+    private static Enum<?> parseEnum(Class<?> enumClass, String value) {
+        if (!enumClass.isEnum()) {
+            throw new TypeConversionException(
+                    "target class " + enumClass.getName() + " is not enum");
+        }
+
+        for (Object enumItem : enumClass.getEnumConstants()) {
+            Enum<?> enumConstant = (Enum<?>) enumItem;
+            if (enumConstant.name().equalsIgnoreCase(value)) {
+                return enumConstant;
+            }
+        }
+        throw new TypeConversionException(
+                "Cannot convert '" + value + "' to " + enumClass.getName());
     }
 }

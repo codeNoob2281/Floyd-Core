@@ -1,6 +1,7 @@
 package com.floyd.core.command;
 
 import com.floyd.core.permission.PermissionUtil;
+import com.floyd.core.util.StrUtil;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,7 +27,9 @@ public class SubCommandMethodHandler {
 
     private boolean fallback;
 
-    /** Method parameter binding metadata (pre-computed at startup to avoid repeated reflection on each call) */
+    /**
+     * Method parameter binding metadata (pre-computed at startup to avoid repeated reflection on each call)
+     */
     private List<ParameterBinding> parameterBindings;
 
     public SubCommandMethodHandler(Object target, Method method, String[] subCommands, String permission) {
@@ -152,21 +155,27 @@ public class SubCommandMethodHandler {
             int idx = paramAnnotation.index();
             field.setAccessible(true);
 
+            String currentArgValue = null;
             // Parameter missing
             if (idx >= args.length || args[idx] == null || args[idx].isEmpty()) {
-                if (!paramAnnotation.required()) {
-                    // Optional field, skip to keep default value
-                    continue;
+                if (paramAnnotation.required()) {
+                    throw new ParameterBindingException(
+                            "Missing required parameter: "
+                                    + (paramAnnotation.description().isEmpty()
+                                    ? field.getName() : paramAnnotation.description()));
                 }
-                throw new ParameterBindingException(
-                        "Missing required parameter: "
-                                + (paramAnnotation.description().isEmpty()
-                                ? field.getName() : paramAnnotation.description()));
+
+                // Optional field, use default value if declared
+                if (!StrUtil.isBlank(paramAnnotation.defaultValue())) {
+                    currentArgValue = paramAnnotation.defaultValue();
+                }
+            } else {
+                currentArgValue = args[idx];
             }
 
             // Type conversion and assignment
             try {
-                Object value = TypeConverter.convert(args[idx], field.getType());
+                Object value = TypeConverter.convert(currentArgValue, field.getType());
                 field.set(body, value);
             } catch (TypeConversionException e) {
                 throw new ParameterBindingException(

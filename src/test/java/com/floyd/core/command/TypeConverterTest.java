@@ -97,7 +97,7 @@ class TypeConverterTest {
 
     @Test
     void testConvertInvalidEnum() {
-        assertThrows(IllegalArgumentException.class, () ->
+        assertThrows(TypeConversionException.class, () ->
                 TypeConverter.convert("invalid", TestEnum.class));
     }
 
