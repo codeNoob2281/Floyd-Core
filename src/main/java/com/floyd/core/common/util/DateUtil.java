@@ -1,4 +1,4 @@
-package com.floyd.core.util;
+package com.floyd.core.common.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

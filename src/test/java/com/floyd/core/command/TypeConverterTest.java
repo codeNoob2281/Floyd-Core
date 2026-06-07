@@ -1,5 +1,7 @@
 package com.floyd.core.command;
 
+import com.floyd.core.common.convert.TypeConversionException;
+import com.floyd.core.common.convert.TypeConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

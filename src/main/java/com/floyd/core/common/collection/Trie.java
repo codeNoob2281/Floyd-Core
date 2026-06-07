@@ -1,8 +1,7 @@
-package com.floyd.core.collection;
+package com.floyd.core.common.collection;
 
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

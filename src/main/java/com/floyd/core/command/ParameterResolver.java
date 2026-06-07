@@ -34,7 +34,7 @@ public class ParameterResolver {
             int position, Class<?> type, Annotation[] annotations) {
 
         // 1. CommandSender — bind directly
-        if (CommandSender.class.isAssignableFrom(type)) {
+        if (type == CommandSender.class) {
             return ParameterBinding.builder(BindingType.SENDER)
                     .parameterIndex(position)
                     .build();

@@ -44,11 +44,29 @@ Floyd-Core is a **Minecraft plugin development framework** (library, not standal
 - `@RequiredPermission` — AOP-enforced permission check on method entry
 - `@SettingsReloadAware` — Interface for settings reload callbacks
 
-### Test Patterns
+### Test Framework
 
-Tests use JUnit 5 + Mockito. Abstract base classes:
-- `BaseTest` — Initializes `ConsoleLogger` via `@BeforeAll`
-- `AbstractSpringTest` — Extends `BaseTest`, creates Spring context from `SpringTestConfig` (`@ComponentScan("com.floyd.core")`), mocks `FloydPlugin.getPluginDataPath()`
+**Dependencies**: JUnit 5.11.0 + Mockito 5.21.0 (no `spring-test` module).
+
+**Two-tier base class hierarchy**:
+- `BaseTest` — Lightweight. Initializes `ConsoleLogger` via `@BeforeAll`. Use for plain unit tests that need logging.
+- `AbstractSpringTest` (extends `BaseTest`) — Creates a fresh `AnnotationConfigApplicationContext` per test class from `SpringTestConfig` (`@ComponentScan("com.floyd.core")`). Mocks `FloydPlugin.getPluginDataPath()` via `mockStatic`. Use for tests that need a Spring context.
+
+**Choosing a base class**:
+- No logging or Spring needed → don't extend either (e.g., `TypeConverterTest`)
+- Logging only → extend `BaseTest` (e.g., `TrieCommandCompleterTest`, `StrUtilTest`)
+- Spring context needed → extend `AbstractSpringTest` (e.g., `I18nMessageProviderTest`, `PermissionAspectTest`)
+
+**Mocking patterns**:
+- `@ExtendWith(MockitoExtension.class)` + `@Mock` fields — for instance mocking
+- `mockStatic()` — for static methods like `Bukkit.getPlayer()` or `FloydPlugin.getPluginDataPath()`
+
+**Conventions**:
+- Class names: `*Test` suffix
+- Method names: `testXxx_Yyy` (underscore separates scenario variant)
+- Bukkit types (`CommandSender`, `Player`, `Bukkit`) must be mocked — no running server in tests
+- Test fixtures: inner `public static` classes or dedicated `@Component` classes in the same package
+- Test resources: `src/test/resources/config.yml` for app config, `src/test/resources/language/` for i18n files
 
 ## Code Style Rules
 
@@ -60,3 +78,11 @@ All code must follow these rules. See [java-code-style.md](.claude/rules/java-co
 ## Commit Rules
 
 Commits must use **English** and follow conventional commits format. See [commit-message.md](.claude/rules/commit-message.md) for full details.
+
+## Development Workflow
+
+All feature development and bug fixes must follow **TDD** (Test-Driven Development). See [test-driven-development.md](.claude/rules/test-driven-development.md) for full details.
+
+- **Red**: Write a failing test first
+- **Green**: Write minimum code to pass the test
+- **Refactor**: Clean up while keeping tests green

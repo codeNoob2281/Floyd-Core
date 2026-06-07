@@ -1,23 +1,21 @@
-package com.floyd.core.command;
+package com.floyd.core.common.convert;
 
 import java.util.UUID;
 
 /**
- * Command argument type converter
+ * The default type converter provider
  *
  * @author floyd
  */
-public class TypeConverter {
+public class DefaultTypeConvertProvider implements TypeConvertProvider {
 
-    /**
-     * Converts a string value to the target type.
-     *
-     * @param value      the original string value
-     * @param targetType the target type
-     * @return the converted object
-     * @throws TypeConversionException if conversion fails
-     */
-    public static Object convert(String value, Class<?> targetType) {
+    @Override
+    public boolean support(Class<?> targetType) {
+        return true;
+    }
+
+    @Override
+    public Object convert(String value, Class<?> targetType) {
         if (value == null) {
             return null;
         }
@@ -70,6 +68,7 @@ public class TypeConverter {
         throw new TypeConversionException(
                 "Unsupported type conversion: String → " + targetType.getSimpleName());
     }
+
 
     private static boolean parseBoolean(String value) {
         return switch (value.toLowerCase()) {

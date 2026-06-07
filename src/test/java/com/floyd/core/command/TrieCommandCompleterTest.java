@@ -1,8 +1,8 @@
 package com.floyd.core.command;
 
 import com.floyd.core.BaseTest;
-import com.floyd.core.collection.Trie;
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.collection.Trie;
+import com.floyd.core.common.util.StrUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

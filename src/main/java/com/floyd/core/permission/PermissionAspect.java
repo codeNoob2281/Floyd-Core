@@ -1,7 +1,7 @@
 package com.floyd.core.permission;
 
 import com.floyd.core.PluginBizException;
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.StrUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.aspectj.lang.ProceedingJoinPoint;

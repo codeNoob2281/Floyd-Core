@@ -1,6 +1,6 @@
 package com.floyd.core.permission;
 
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.StrUtil;
 import org.bukkit.command.CommandSender;
 
 /**
