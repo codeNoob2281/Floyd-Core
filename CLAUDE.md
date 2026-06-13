@@ -26,16 +26,23 @@ mvn test -Dtest=TrieCommandCompleterTest#testMethodName
 
 ## Project Overview
 
-Floyd-Core is a **Minecraft plugin development framework** (library, not standalone plugin) built on **PaperMC 1.20.6+** and **Spring Framework 6.2.7**. Java 21, Maven 3.6+.
+Floyd-Core is a **Minecraft plugin development framework** (library, not standalone plugin).
+Built on **PaperMC 1.20.6+** and **Spring Framework 6.2.7**. Java 21, Maven 3.6+.
 
 ## Architecture
 
-- **FloydPlugin** (abstract base) — Entry point extending `JavaPlugin`. On `onEnable()`, initializes `ConsoleLogger`, creates Spring `AnnotationConfigApplicationContext` with `SpringConfig` + user config classes, then calls abstract `initialize()`. On `onDisable()`, calls `cleanup()` then closes Spring context.
+- **FloydPlugin** (abstract base) — Entry point extending `JavaPlugin`
+  - `onEnable()`: init `ConsoleLogger` → create Spring context → call `initialize()`
+  - `onDisable()`: call `cleanup()` → close Spring context
 - **SpringConfig** — Core `@Configuration` enabling AOP and `@ComponentScan("com.floyd.core")`.
-- **CommandDispatcher** — `BeanPostProcessor` + `SmartInitializingSingleton` that auto-discovers `@SubCommandHandler` beans and registers Bukkit command executors. Uses `TrieCommandCompleter` for tab completion with permission filtering.
-- **DatabaseManager** — HikariCP-based connection pool supporting PostgreSQL, SQLite, MySQL. Contains a lightweight ORM-like SQL builder (`syntax/` package with fluent Select/Insert/Update/Delete).
+- **CommandDispatcher** — Auto-discovers `@SubCommandHandler` beans, registers Bukkit commands
+  - Implements `BeanPostProcessor` + `SmartInitializingSingleton`
+  - Uses `TrieCommandCompleter` for tab completion with permission filtering
+- **DatabaseManager** — HikariCP connection pool (PostgreSQL, SQLite, MySQL)
+  - Lightweight SQL builder in `syntax/` package (Select/Insert/Update/Delete)
 - **PermissionAspect** — AspectJ `@Aspect` intercepting `@RequiredPermission` annotated methods, auto-detecting `Player` parameters.
-- **I18nSettingManagerImpl** — ConfigMe-based per-locale settings manager that scans `classpath*:language/*` and custom language directories, with locale fallback chains.
+- **I18nSettingManagerImpl** — Per-locale settings manager with fallback chains
+  - Scans `classpath*:language/*` and custom language directories
 - **PluginSettingsManager** — ConfigMe `SettingsManagerImpl` wrapper with reload listeners.
 
 ### Key Annotations
@@ -50,7 +57,10 @@ Floyd-Core is a **Minecraft plugin development framework** (library, not standal
 
 **Two-tier base class hierarchy**:
 - `BaseTest` — Lightweight. Initializes `ConsoleLogger` via `@BeforeAll`. Use for plain unit tests that need logging.
-- `AbstractSpringTest` (extends `BaseTest`) — Creates a fresh `AnnotationConfigApplicationContext` per test class from `SpringTestConfig` (`@ComponentScan("com.floyd.core")`). Mocks `FloydPlugin.getPluginDataPath()` via `mockStatic`. Use for tests that need a Spring context.
+- `AbstractSpringTest` (extends `BaseTest`) — Spring context per test class
+  - Creates `AnnotationConfigApplicationContext` from `SpringTestConfig`
+  - Mocks `FloydPlugin.getPluginDataPath()` via `mockStatic`
+  - Use for tests that need a Spring context
 
 **Choosing a base class**:
 - No logging or Spring needed → don't extend either (e.g., `TypeConverterTest`)
