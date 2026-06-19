@@ -17,9 +17,10 @@ public class OnlinePlayersParameterCompleter implements ParameterCompleter {
 
     @Override
     public List<String> complete(CommandSender commandSender, String partial) {
+        String lowerCasePartial = partial.toLowerCase();
         return Bukkit.getOnlinePlayers().stream()
                 .map(Player::getName)
-                .filter(name -> name.startsWith(partial))
+                .filter(name -> name.toLowerCase().startsWith(lowerCasePartial))
                 .toList();
     }
 }

@@ -5,12 +5,10 @@ import com.floyd.core.command.param.ParameterCompleterFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author floyd
@@ -20,9 +18,13 @@ public class OfflinePlayersParameterCompleter implements ParameterCompleter {
 
     @Override
     public List<String> complete(CommandSender commandSender, String partial) {
+        // todo Calling Bukkit.getOfflinePlayers() on the main thread is a major performance bottleneck because it loads all historical player profiles from disk/database.
+        //  On large servers, this can cause severe lag spikes (TPS drops) or even freeze the server.
+        //  Consider caching offline player names asynchronously
+        String lowerPartial = partial.toLowerCase();
         return Arrays.stream(Bukkit.getOfflinePlayers())
                 .map(OfflinePlayer::getName)
-                .filter(name -> name != null && name.startsWith(partial))
+                .filter(name -> name != null && name.toLowerCase().startsWith(lowerPartial))
                 .toList();
     }
 }

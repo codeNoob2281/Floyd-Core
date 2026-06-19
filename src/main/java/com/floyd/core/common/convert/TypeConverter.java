@@ -1,7 +1,7 @@
 package com.floyd.core.common.convert;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Command argument type converter
@@ -12,7 +12,7 @@ public class TypeConverter {
 
     private static final DefaultTypeConvertProvider defaultTypeConverterProvider = new DefaultTypeConvertProvider();
 
-    private static final List<TypeConvertProvider> customTypeConvertProviders = new ArrayList<>();
+    private static final List<TypeConvertProvider> customTypeConvertProviders = new CopyOnWriteArrayList<>();
 
     /**
      * Converts a string value to the target type.

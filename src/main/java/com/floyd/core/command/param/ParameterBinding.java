@@ -20,7 +20,7 @@ public class ParameterBinding {
     private final String description;
     private final boolean required;
     private final String defaultValue;
-    private final ParameterCompleter completer;
+    private final String completerName;
 
     // === BODY ===
     private final Class<?> bodyType;
@@ -34,7 +34,7 @@ public class ParameterBinding {
         this.required = builder.required;
         this.defaultValue = builder.defaultValue;
         this.bodyType = builder.bodyType;
-        this.completer = builder.completer;
+        this.completerName = builder.completerName;
     }
 
     // ==================== Builder ====================
@@ -53,7 +53,7 @@ public class ParameterBinding {
         private String description = "";
         private boolean required = true;
         private String defaultValue = "";
-        private ParameterCompleter completer;
+        private String completerName;
 
         // BODY field
         private Class<?> bodyType;
@@ -97,8 +97,8 @@ public class ParameterBinding {
             return this;
         }
 
-        public Builder parameterCompleter(String completer) {
-            this.completer = ParameterCompleterFactory.create(completer);
+        public Builder parameterCompleter(String completerName) {
+            this.completerName = completerName;
             return this;
         }
 

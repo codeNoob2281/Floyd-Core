@@ -53,8 +53,8 @@ public class SubCommandExecutor implements CommandExecutor, TabCompleter {
         SubCommandMethodHandler methodHandler = commandHandlerMapping.getMethodHandler(args);
         if (methodHandler != null) {
             int subCmdLen = methodHandler.getSubCommands() == null ? 0 : methodHandler.getSubCommands().length;
-            int paramIdx = args.length - subCmdLen;
-            results = methodHandler.completeParam(paramIdx, sender, args[args.length - 1]);
+            int argIdx = args.length - 1 - subCmdLen;
+            results = methodHandler.completeParam(sender, argIdx, args[args.length - 1]);
         }
 
         return results != null ? results : new ArrayList<>();
