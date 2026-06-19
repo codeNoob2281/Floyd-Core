@@ -1,4 +1,4 @@
-package com.floyd.core.command;
+package com.floyd.core.command.param;
 
 /**
  * Parameter binding exception used to send readable error messages to players.

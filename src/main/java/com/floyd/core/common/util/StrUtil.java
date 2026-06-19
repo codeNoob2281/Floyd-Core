@@ -1,4 +1,4 @@
-package com.floyd.core.util;
+package com.floyd.core.common.util;
 
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.helpers.FormattingTuple;

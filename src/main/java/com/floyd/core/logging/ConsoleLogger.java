@@ -2,8 +2,8 @@ package com.floyd.core.logging;
 
 import com.floyd.core.settings.PluginSettingsManager;
 import com.floyd.core.settings.properties.LoggingSettings;
-import com.floyd.core.util.FileUtil;
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.FileUtil;
+import com.floyd.core.common.util.StrUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.helpers.FormattingTuple;

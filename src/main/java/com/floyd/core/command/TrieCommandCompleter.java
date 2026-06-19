@@ -1,8 +1,8 @@
 package com.floyd.core.command;
 
-import com.floyd.core.collection.Trie;
+import com.floyd.core.common.collection.Trie;
 import com.floyd.core.permission.PermissionUtil;
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.StrUtil;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;

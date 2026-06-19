@@ -550,7 +550,7 @@ logger().error("发生错误", exception);
 
 物品序列化接口。
 
-**位置**: `com.floyd.core.inventory.io.ItemStackSerializer`
+**位置**: `com.floyd.core.inventory.ItemStackSerializer`
 
 **主要方法**:
 
@@ -566,7 +566,7 @@ ItemStack deserialize(String data) throws ItemStackDeserializeException;
 
 Bukkit 物品序列化实现。
 
-**位置**: `com.floyd.core.inventory.io.BukkitItemStackSerializer`
+**位置**: `com.floyd.core.inventory.BukkitItemStackSerializer`
 
 **使用示例**:
 
@@ -725,13 +725,13 @@ if (balance < amount) {
 
 物品序列化异常。
 
-**位置**: `com.floyd.core.inventory.io.ItemStackSerializeException`
+**位置**: `com.floyd.core.inventory.ItemStackSerializeException`
 
 ### ItemStackDeserializeException
 
 物品反序列化异常。
 
-**位置**: `com.floyd.core.inventory.io.ItemStackDeserializeException`
+**位置**: `com.floyd.core.inventory.ItemStackDeserializeException`
 
 ---
 

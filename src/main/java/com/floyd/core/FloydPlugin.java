@@ -4,7 +4,7 @@ import com.floyd.core.logging.ConsoleLogger;
 import com.floyd.core.logging.ConsoleLoggerFactory;
 import com.floyd.core.logging.Logger;
 import com.floyd.core.settings.PluginSettingsManager;
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.StrUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

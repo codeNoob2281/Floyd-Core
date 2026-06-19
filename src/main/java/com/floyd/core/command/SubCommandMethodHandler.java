@@ -1,14 +1,19 @@
 package com.floyd.core.command;
 
+import com.floyd.core.command.param.*;
+import com.floyd.core.common.convert.TypeConversionException;
+import com.floyd.core.common.convert.TypeConverter;
+import com.floyd.core.common.util.StrUtil;
 import com.floyd.core.permission.PermissionUtil;
-import com.floyd.core.util.StrUtil;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -83,6 +88,48 @@ public class SubCommandMethodHandler {
         } catch (Exception e) {
             throw new CommandInvokeException("Error invoking method: " + method.getName(), e);
         }
+    }
+
+    /**
+     * Get the next argument for the given command
+     *
+     * @param commandSender the command sender
+     * @param argIdx        the index of the current argument to complete
+     * @param partial       the partial command input
+     * @return list of possible completions
+     * @return
+     */
+    public @NotNull List<String> completeParam(CommandSender commandSender, int argIdx, String partial) {
+        if (argIdx < 0) {
+            return new ArrayList<>();
+        }
+        for (ParameterBinding binding : parameterBindings) {
+            if (binding.getBindingType() == ParameterBinding.BindingType.SINGLE_PARAM && binding.getArgIndex() == argIdx) {
+                String completerName = binding.getCompleterName();
+                ParameterCompleter completer = ParameterCompleterFactory.create(completerName);
+                if (completer != null) {
+                    return completer.complete(commandSender, partial);
+                }
+            } else if (binding.getBindingType() == ParameterBinding.BindingType.BODY) {
+                Class<?> currentClass = binding.getBodyType();
+                while (currentClass != null && currentClass != Object.class) {
+                    for (Field field : currentClass.getDeclaredFields()) {
+                        SubCommandParam paramAnnotation = field.getAnnotation(SubCommandParam.class);
+                        if (paramAnnotation != null && paramAnnotation.index() == argIdx) {
+                            String completerName = paramAnnotation.completer();
+                            if (completerName != null && !completerName.isEmpty()) {
+                                ParameterCompleter completer = ParameterCompleterFactory.create(completerName);
+                                if (completer != null) {
+                                    return completer.complete(commandSender, partial);
+                                }
+                            }
+                        }
+                    }
+                    currentClass = currentClass.getSuperclass();
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 
     /**

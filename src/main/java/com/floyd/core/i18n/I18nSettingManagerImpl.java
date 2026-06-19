@@ -14,7 +14,7 @@ import com.floyd.core.FloydPlugin;
 import com.floyd.core.PluginBizException;
 import com.floyd.core.logging.ConsoleLoggerFactory;
 import com.floyd.core.logging.Logger;
-import com.floyd.core.util.FileUtil;
+import com.floyd.core.common.util.FileUtil;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;

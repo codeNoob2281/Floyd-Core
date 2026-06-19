@@ -1,6 +1,6 @@
-package com.floyd.core.command;
+package com.floyd.core.command.param;
 
-import com.floyd.core.command.ParameterBinding.BindingType;
+import com.floyd.core.command.param.ParameterBinding.BindingType;
 import org.bukkit.command.CommandSender;
 
 import java.lang.annotation.Annotation;
@@ -34,7 +34,7 @@ public class ParameterResolver {
             int position, Class<?> type, Annotation[] annotations) {
 
         // 1. CommandSender — bind directly
-        if (CommandSender.class.isAssignableFrom(type)) {
+        if (type == CommandSender.class) {
             return ParameterBinding.builder(BindingType.SENDER)
                     .parameterIndex(position)
                     .build();
@@ -50,6 +50,7 @@ public class ParameterResolver {
                     .description(paramAnnotation.description())
                     .required(paramAnnotation.required())
                     .defaultValue(paramAnnotation.defaultValue())
+                    .parameterCompleter(paramAnnotation.completer())
                     .build();
         }
 

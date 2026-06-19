@@ -214,18 +214,18 @@ public class BackpackService {
 Serialize and deserialize ItemStacks easily:
 
 ```java
-import com.floyd.core.inventory.io.ItemStackSerializer;
-import com.floyd.core.inventory.io.BukkitItemStackSerializer;
+import com.floyd.core.inventory.ItemStackSerializer;
+import com.floyd.core.inventory.BukkitItemStackSerializer;
 
 // Initialize serializer
 ItemStackSerializer serializer = new BukkitItemStackSerializer();
 
-// Serialize ItemStack to Base64 string
-ItemStack itemStack = new ItemStack(Material.DIAMOND_SWORD);
-String serialized = serializer.serialize(itemStack);
+        // Serialize ItemStack to Base64 string
+        ItemStack itemStack = new ItemStack(Material.DIAMOND_SWORD);
+        String serialized = serializer.serialize(itemStack);
 
-// Deserialize back to ItemStack
-ItemStack restored = serializer.deserialize(serialized);
+        // Deserialize back to ItemStack
+        ItemStack restored = serializer.deserialize(serialized);
 ```
 
 The serialization uses Bukkit's official `serializeAsBytes()` method and Base64 encoding for safe storage in databases or config files.

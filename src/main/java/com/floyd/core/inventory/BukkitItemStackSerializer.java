@@ -1,4 +1,4 @@
-package com.floyd.core.inventory.io;
+package com.floyd.core.inventory;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

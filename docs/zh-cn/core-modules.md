@@ -244,18 +244,18 @@ public class BackpackService {
 ### 基本用法
 
 ```java
-import com.floyd.core.inventory.io.ItemStackSerializer;
-import com.floyd.core.inventory.io.BukkitItemStackSerializer;
+import com.floyd.core.inventory.ItemStackSerializer;
+import com.floyd.core.inventory.BukkitItemStackSerializer;
 
 // 创建序列化器
 ItemStackSerializer serializer = new BukkitItemStackSerializer();
 
-// 序列化 ItemStack -> String
-ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
-String serialized = serializer.serialize(item);
+        // 序列化 ItemStack -> String
+        ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
+        String serialized = serializer.serialize(item);
 
-// 反序列化 String -> ItemStack
-ItemStack restored = serializer.deserialize(serialized);
+        // 反序列化 String -> ItemStack
+        ItemStack restored = serializer.deserialize(serialized);
 ```
 
 ### 存储到配置文件

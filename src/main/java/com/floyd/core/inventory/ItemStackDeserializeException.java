@@ -1,4 +1,4 @@
-package com.floyd.core.inventory.io;
+package com.floyd.core.inventory;
 
 /**
  * ItemStack deserialization exception

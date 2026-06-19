@@ -1,6 +1,6 @@
 package com.floyd.core.command;
 
-import com.floyd.core.util.StrUtil;
+import com.floyd.core.common.util.StrUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.annotation.AnnotationUtils;
