@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.6] - 2026-07-19
+
+### Features
+- Add parameter-level tab completion support (ee8af52)
+- Add declarative parameter binding system for sub-commands (ee9061f)
+
+### Refactors
+- Extract command execution into SubCommandExecutor (9705d6c)
+- Restructure packages and introduce type converter provider pattern (1992050)
+- Optimize the code based on code review (321b483, ea1b6c8)
+
+### Chores
+- Optimize Claude Code configuration for readability (873d490)
+
 ## [1.0.5] - 2026-05-23
 
 ### Features
